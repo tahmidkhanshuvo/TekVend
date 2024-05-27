@@ -1,3 +1,4 @@
+import 'package:amar/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'chat_screen.dart'; // Import the Chat page
@@ -74,7 +75,7 @@ class OTPPageState extends State<OTPPage> {
                           });
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const ChatScreen()),
+                            MaterialPageRoute(builder: (context) => const ProductPage()),
                           );
                         } else {
                           setState(() {
