@@ -1,7 +1,6 @@
 import 'package:amar/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'chat_screen.dart'; // Import the Chat page
 
 class OTPPage extends StatefulWidget {
   const OTPPage({super.key});
