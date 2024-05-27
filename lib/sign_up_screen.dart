@@ -170,7 +170,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                     // Navigate to OTP page
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => OTPPage()),
+                      MaterialPageRoute(builder: (context) => const OTPPage()),
                     );
                   }
                 },
