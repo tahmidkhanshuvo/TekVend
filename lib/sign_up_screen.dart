@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Input fields for username, email, password
-            TextField(
+            const TextField(
               decoration: InputDecoration(labelText: 'Username'),
             ),
-            TextField(
+            const TextField(
               decoration: InputDecoration(labelText: 'Email'),
             ),
-            TextField(
+            const TextField(
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
@@ -24,14 +26,14 @@ class SignUpScreen extends StatelessWidget {
               onPressed: () {
                 // Implement sign-up logic
               },
-              child: Text('Sign Up'),
+              child: const Text('Sign Up'),
             ),
             TextButton(
               onPressed: () {
                 // Navigate to sign-in screen
                 Navigator.pop(context);
               },
-              child: Text('Already have an account? Sign In'),
+              child: const Text('Already have an account? Sign In'),
             ),
           ],
         ),

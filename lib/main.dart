@@ -19,11 +19,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      initialRoute: '/signin',
       routes: {
-        '/': (context) => const ChatScreen(),
-        '/signin': (context) => SignInScreen(),
-        '/signup': (context) => SignUpScreen(),
+        '/signin': (context) =>  SignInScreen(),
+        '/signup': (context) =>  SignUpScreen(),
+        '/chat': (context) => const ChatScreen(),
       },
     );
   }
