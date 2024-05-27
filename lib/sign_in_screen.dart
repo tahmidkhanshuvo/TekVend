@@ -77,7 +77,7 @@ class SignInScreenState extends State<SignInScreen> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Navigate to chat screen
-                        Navigator.pushReplacementNamed(context, '/chat');
+                        Navigator.pushReplacementNamed(context, '/home');
                       }
                     },
                     style: ElevatedButton.styleFrom(
