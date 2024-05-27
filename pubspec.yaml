@@ -1,5 +1,5 @@
-name: tekvend
-description: "TekVend is a prototype project developed by AUST CSE students. It is a project for CSE2104 Course."
+name: amar
+description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  google_generative_ai:
+  intl:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -59,9 +61,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - lib/images/chatlogo.png
+    - lib/images/chatbackground.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
