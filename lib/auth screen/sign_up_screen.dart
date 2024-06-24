@@ -1,81 +1,63 @@
 import '../pages.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  SignUpScreenState createState() => SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _retypePasswordController = TextEditingController();
 
-  // Firebase Authentication instance
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    _phoneNumberController.dispose();
+    _passwordController.dispose();
+    _retypePasswordController.dispose();
+    super.dispose();
+  }
 
-  // Google sign-in instance
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  // Function to handle email/password sign up
-  void _registerWithEmailAndPassword() async {
+  Future<void> _signUpWithEmailAndPassword() async {
     try {
-      UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password: _passwordController.text,
+        password: _passwordController.text.trim(),
       );
-
-      // Navigate to additional profile setup or home screen
+      // Navigate to home screen or OTP page upon successful sign-up
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
-      print('Failed to create user: $e');
-      // Handle sign-up failures
-      String errorMessage = 'Failed to create user';
-      if (e is FirebaseAuthException) {
-        errorMessage = e.message ?? 'An error occurred';
-      }
-      // Show error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(errorMessage),
-        duration: const Duration(seconds: 5),
-      ));
+      print('Failed to sign up: $e');
+      // Handle sign-up failures, e.g., display error message
     }
   }
 
-  // Function to handle Google sign up
-  void _registerWithGoogle() async {
+  Future<void> _signUpWithGoogle() async {
     try {
-      // Trigger the Google sign-in flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return; // User canceled the sign-in flow
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
-
-      // Create a new credential
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
       );
 
-      // Sign in to Firebase with the Google credentials
-      UserCredential userCredential =
-      await _auth.signInWithCredential(credential);
-
-      // Navigate to additional profile setup or home screen
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      // Navigate to home screen upon successful sign-up
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print('Failed to sign in with Google: $e');
-      // Handle Google sign-in failures
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Failed to sign in with Google. Please try again.'),
-        duration: Duration(seconds: 5),
-      ));
+      // Handle sign-in failures, e.g., display error message
     }
   }
 
@@ -131,6 +113,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
@@ -144,6 +142,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                     return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _phoneNumberController,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                    return 'Please enter a valid phone number';
                   }
                   return null;
                 },
@@ -168,28 +185,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _retypePasswordController,
+                decoration: InputDecoration(
+                  labelText: 'Retype Password',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please retype your password';
+                  }
+                  if (value != _passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    _registerWithEmailAndPassword();
+                    _signUpWithEmailAndPassword();
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white, backgroundColor: Colors.green,
                 ),
                 child: const Text('Sign Up'),
               ),
               const SizedBox(height: 16),
-              Center(
-                child: TextButton.icon(
-                  onPressed: _registerWithGoogle,
-                  icon: Image.asset(
-                    AppImages.googleLogo,
-                    height: 24.0,
-                  ),
-                  label: const Text('Sign Up with Google'),
+              ElevatedButton.icon(
+                onPressed: _signUpWithGoogle,
+                icon: Image.asset(
+                  'lib/images/googlelogo.png',
+                  height: 24.0,
+                ),
+                label: const Text('Sign Up with Google'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.red,
                 ),
               ),
               const SizedBox(height: 16),

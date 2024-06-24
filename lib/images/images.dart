@@ -7,7 +7,7 @@ class AppImages {
   static const String product3 = 'lib/images/product3.png';
   // images.dart
 
-  static const String googleLogo = 'assets/google_logo.png';
+  static const String googlelogo = 'lib/images/googlelogo.png';
 
 
 }
