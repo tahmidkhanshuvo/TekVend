@@ -25,7 +25,7 @@ class SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/profile');
     } catch (e) {
       print('Failed to sign in: $e');
       // Handle sign-in failures, e.g., display error message
@@ -51,7 +51,7 @@ class SignInScreenState extends State<SignInScreen> {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/profile');
     } catch (e) {
       print('Failed to sign in with Google: $e');
       // Handle sign-in failures, e.g., display error message

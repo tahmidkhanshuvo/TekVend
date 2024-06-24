@@ -15,16 +15,51 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   final _genderController = TextEditingController();
   final _addressController = TextEditingController();
 
+  User? _currentUser;
+  DocumentSnapshot? _userData;
+  String _profileImageUrl = 'default_image_url'; // Default image URL
+
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with user data
-    _nameController.text = 'John Doe';
-    _emailController.text = 'johndoe@example.com';
-    _phoneController.text = '+1234567890';
-    _dobController.text = '01/01/1990';
-    _genderController.text = 'Male';
-    _addressController.text = '123 Main St, Springfield';
+    _currentUser = FirebaseAuth.instance.currentUser;
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    if (_currentUser != null) {
+      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).get();
+      setState(() {
+        _userData = userData;
+        _nameController.text = '${userData['firstName']} ${userData['lastName']}';
+        _emailController.text = userData['email'];
+        _phoneController.text = userData['phoneNumber'];
+        _dobController.text = userData['dob'] ?? ''; // Assuming 'dob' is stored in Firestore
+        _genderController.text = userData['gender'] ?? ''; // Assuming 'gender' is stored in Firestore
+        _addressController.text = userData['address'] ?? ''; // Assuming 'address' is stored in Firestore
+        _profileImageUrl = userData['profileImageUrl'] ?? 'default_image_url';
+      });
+    }
+  }
+
+  Future<void> _updateUserData() async {
+    if (_currentUser != null) {
+      await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).update({
+        'firstName': _nameController.text.split(' ')[0],
+        'lastName': _nameController.text.split(' ').length > 1 ? _nameController.text.split(' ')[1] : '',
+        'email': _emailController.text,
+        'phoneNumber': _phoneController.text,
+        'dob': _dobController.text,
+        'gender': _genderController.text,
+        'address': _addressController.text,
+        'profileImageUrl': _profileImageUrl,
+      });
+    }
+  }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, '/login'); // Assuming '/login' is the route for the login screen
   }
 
   @override
@@ -36,6 +71,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     _genderController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      String fileName = '${_currentUser!.uid}.png';
+
+      try {
+        // Upload image to Firebase Storage
+        TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child('profile_images/$fileName').putFile(imageFile);
+        String downloadUrl = await snapshot.ref.getDownloadURL();
+
+        // Update Firestore with new image URL
+        setState(() {
+          _profileImageUrl = downloadUrl;
+        });
+        await _updateUserData();
+      } catch (e) {
+        print('Failed to upload image: $e');
+      }
+    }
   }
 
   void _editProfile() {
@@ -82,8 +140,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
           TextButton(
             onPressed: () {
-              // Save changes
-              setState(() {});
+              _updateUserData();
               Navigator.of(context).pop();
             },
             child: const Text('Save'),
@@ -98,6 +155,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _signOut,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -105,10 +168,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
-            const Center(
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: AssetImage('lib/images/profile_picture.png'), // Replace with your profile picture path
+            Center(
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImageUrl == 'default_image_url'
+                      ? const AssetImage('lib/images/default_profile.png') // Default profile image path
+                      : NetworkImage(_profileImageUrl) as ImageProvider,
+                ),
               ),
             ),
             const SizedBox(height: 20),

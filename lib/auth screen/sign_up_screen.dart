@@ -35,8 +35,19 @@ class SignUpScreenState extends State<SignUpScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // Store user data in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
+        'firstName': _firstNameController.text.trim(),
+        'lastName': _lastNameController.text.trim(),
+        'username': _usernameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phoneNumber': _phoneNumberController.text.trim(),
+        'profileImageUrl': 'default_image_url', // Placeholder for the default image URL
+      });
+
       // Navigate to home screen or OTP page upon successful sign-up
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/profile');
     } catch (e) {
       print('Failed to sign up: $e');
       // Handle sign-up failures, e.g., display error message
@@ -53,8 +64,19 @@ class SignUpScreenState extends State<SignUpScreen> {
       );
 
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Store user data in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).set({
+        'firstName': googleUser?.displayName?.split(' ')[0] ?? '',
+        'lastName': (googleUser?.displayName?.split(' ').length ?? 0) > 1 ? googleUser?.displayName?.split(' ')[1] : '',
+        'username': googleUser?.displayName ?? '',
+        'email': googleUser?.email ?? '',
+        'phoneNumber': userCredential.user?.phoneNumber ?? '',
+        'profileImageUrl': googleUser?.photoUrl ?? 'default_image_url', // Use Google photo URL or default image
+      });
+
       // Navigate to home screen upon successful sign-up
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/profile');
     } catch (e) {
       print('Failed to sign in with Google: $e');
       // Handle sign-in failures, e.g., display error message
