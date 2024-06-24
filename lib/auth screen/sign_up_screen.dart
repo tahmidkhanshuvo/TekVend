@@ -1,23 +1,83 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'otp_page.dart';  // Import the OTP page
+import '../pages.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  SignUpScreenState createState() => SignUpScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _retypePasswordController = TextEditingController();
+
+  // Firebase Authentication instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Google sign-in instance
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  // Function to handle email/password sign up
+  void _registerWithEmailAndPassword() async {
+    try {
+      UserCredential userCredential =
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      // Navigate to additional profile setup or home screen
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      print('Failed to create user: $e');
+      // Handle sign-up failures
+      String errorMessage = 'Failed to create user';
+      if (e is FirebaseAuthException) {
+        errorMessage = e.message ?? 'An error occurred';
+      }
+      // Show error message to the user
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(errorMessage),
+        duration: const Duration(seconds: 5),
+      ));
+    }
+  }
+
+  // Function to handle Google sign up
+  void _registerWithGoogle() async {
+    try {
+      // Trigger the Google sign-in flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return; // User canceled the sign-in flow
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+      await googleUser.authentication;
+
+      // Create a new credential
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credentials
+      UserCredential userCredential =
+      await _auth.signInWithCredential(credential);
+
+      // Navigate to additional profile setup or home screen
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      print('Failed to sign in with Google: $e');
+      // Handle Google sign-in failures
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Failed to sign in with Google. Please try again.'),
+        duration: Duration(seconds: 5),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,22 +131,6 @@ class SignUpScreenState extends State<SignUpScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your username';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
@@ -100,25 +144,6 @@ class SignUpScreenState extends State<SignUpScreen> {
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                     return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneNumberController,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                    return 'Please enter a valid phone number';
                   }
                   return null;
                 },
@@ -143,41 +168,29 @@ class SignUpScreenState extends State<SignUpScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _retypePasswordController,
-                decoration: InputDecoration(
-                  labelText: 'Retype Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please retype your password';
-                  }
-                  if (value != _passwordController.text) {
-                    return 'Passwords do not match';
-                  }
-                  return null;
-                },
-              ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Navigate to OTP page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const OTPPage()),
-                    );
+                    _registerWithEmailAndPassword();
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
                 ),
                 child: const Text('Sign Up'),
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton.icon(
+                  onPressed: _registerWithGoogle,
+                  icon: Image.asset(
+                    AppImages.googleLogo,
+                    height: 24.0,
+                  ),
+                  label: const Text('Sign Up with Google'),
+                ),
               ),
               const SizedBox(height: 16),
               Center(

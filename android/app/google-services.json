@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1013974931221",
+    "project_id": "tekvend-2024",
+    "storage_bucket": "tekvend-2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013974931221:android:6d8ea5cd17b89210dcfb1c",
+        "android_client_info": {
+          "package_name": "com.example.tekvend.tekvend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1013974931221-5eeb38oil6nuc5rsev5r9dachlpet6bg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWf3Pe1OcEvpxEalqWyH--oGPQeZ_vHGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1013974931221-5eeb38oil6nuc5rsev5r9dachlpet6bg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

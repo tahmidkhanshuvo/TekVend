@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:intl/intl.dart';
-import 'message.dart';
+import '../pages.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -73,7 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
         decoration: BoxDecoration(
           image: DecorationImage(
             colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop),
-            image: AssetImage('lib/images/chatbackground.png'), // Update with your local image path
+            image: const AssetImage('lib/images/chatbackground.png'), // Update with your local image path
             fit: BoxFit.cover,
           ),
         ),

@@ -1,6 +1,4 @@
-import 'package:amar/product_page.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../pages.dart';
 
 class OTPPage extends StatefulWidget {
   const OTPPage({super.key});
@@ -97,4 +95,4 @@ class OTPPageState extends State<OTPPage> {
       ),
     );
   }
-}
+} // hello ki koren

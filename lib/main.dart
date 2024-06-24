@@ -1,10 +1,12 @@
-import 'package:flutter/material.dart';
-import 'chat_screen.dart';
-import 'sign_in_screen.dart';
-import 'sign_up_screen.dart';
-import 'product_page.dart';
+import 'pages.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    name: 'TekVend',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         '/signin': (context) =>  const SignInScreen(),
         '/signup': (context) =>  const SignUpScreen(),
         '/chat': (context) => const ChatScreen(),
+        '/profile': (context) => const UserProfileScreen(),
+        '/cart': (context) => const ProductCartScreen(),
       },
     );
   }
