@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const ChatScreen(),
         '/profile': (context) => const UserProfileScreen(),
         '/cart': (context) => const ProductCartScreen(),
-        '/sign_out': (context) => SignOutScreen(),
       },
     );
   }

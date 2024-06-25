@@ -59,7 +59,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login'); // Assuming '/login' is the route for the login screen
+    Navigator.pushReplacementNamed(context, '/signin'); // Assuming '/login' is the route for the login screen
   }
 
   @override
@@ -149,16 +149,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       ),
     );
   }
-  Final FirebaseAuth _auth = FirebaseAuth.instance;
-  void _signOut(BuildContext context) async {
-    try {
-      await _auth.signOut();
-      // Navigate to login or home screen after sign-out
-      Navigator.pushNamedAndRemoveUntil(context, '/signin', (route) => false);
-    } catch (e) {
-      print('Failed to sign out: $e');
-    }
-  }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

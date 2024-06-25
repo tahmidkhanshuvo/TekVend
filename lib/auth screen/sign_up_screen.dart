@@ -47,7 +47,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       });
 
       // Navigate to home screen or OTP page upon successful sign-up
-      Navigator.pushReplacementNamed(context, '/profile');
+      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print('Failed to sign up: $e');
       // Handle sign-up failures, e.g., display error message
@@ -76,7 +76,7 @@ class SignUpScreenState extends State<SignUpScreen> {
       });
 
       // Navigate to home screen upon successful sign-up
-      Navigator.pushReplacementNamed(context, '/profile');
+      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       print('Failed to sign in with Google: $e');
       // Handle sign-in failures, e.g., display error message
@@ -248,7 +248,7 @@ class SignUpScreenState extends State<SignUpScreen> {
                 ),
                 label: const Text('Sign Up with Google'),
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.red,
+                  foregroundColor: Colors.white, backgroundColor: Colors.black,
                 ),
               ),
               const SizedBox(height: 16),

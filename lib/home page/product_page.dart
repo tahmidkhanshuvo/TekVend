@@ -15,6 +15,12 @@ class ProductPage extends StatelessWidget {
               // Implement search functionality
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/profile');
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
