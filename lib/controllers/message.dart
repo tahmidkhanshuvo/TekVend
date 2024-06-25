@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import '../pages.dart';
 
 class Message {
   final bool isUser;
