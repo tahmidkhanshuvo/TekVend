@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1013974931221-o8ft3ktnafgejmnjeg7q5tlq23jdidth.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tekvend.tekvend",
+            "certificate_hash": "6895cb5ba70f24278f3f84ac2e2a7c4d7020ed9f"
+          }
+        },
+        {
           "client_id": "1013974931221-5eeb38oil6nuc5rsev5r9dachlpet6bg.apps.googleusercontent.com",
           "client_type": 3
         }

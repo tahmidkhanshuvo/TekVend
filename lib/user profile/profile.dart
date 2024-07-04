@@ -53,7 +53,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         'gender': _genderController.text,
         'address': _addressController.text,
         'profileImageUrl': _profileImageUrl,
-      });
+      }).then;
     }
   }
 

@@ -201,7 +201,7 @@ class ProductsGrid extends StatelessWidget {
         childAspectRatio: 2 / 3,
       ),
       itemBuilder: (context, index) {
-        return ProductItem(image: 'images/slide${index + 1}.jpg');
+        return ProductItem(image: 'lib/images/product${index + 1}.jpg');
       },
     );
   }
