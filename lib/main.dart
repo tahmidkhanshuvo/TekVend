@@ -22,14 +22,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/signin',
+      initialRoute: '/home',
       routes: {
-        '/home': (context) =>  const ProductPage(),
+        '/home': (context) =>   ProductPage(),
         '/signin': (context) =>  const SignInScreen(),
         '/signup': (context) =>  const SignUpScreen(),
         '/chat': (context) => const ChatScreen(),
         '/profile': (context) => const UserProfileScreen(),
         '/cart': (context) => const ProductCartScreen(),
+        '/checkout': (context) => const CheckoutPage(),
       },
     );
   }

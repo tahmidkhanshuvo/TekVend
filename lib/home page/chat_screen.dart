@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Row(
           children: [
             Image.asset(
-              'lib/images/chatlogo.png', // Update with your local image path
+              'lib/images/chatlogo.png',
               height: 120,
             ),
             const SizedBox(width: 10),

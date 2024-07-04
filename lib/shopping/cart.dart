@@ -23,9 +23,9 @@ class ProductCartScreen extends StatefulWidget {
 
 class _ProductCartScreenState extends State<ProductCartScreen> {
   final List<Product> _cartItems = [
-    Product(name: 'Product 1', price: 10.0, imageUrl: 'lib/images/product1.png'),
-    Product(name: 'Product 2', price: 15.0, imageUrl: 'lib/images/product2.png'),
-    Product(name: 'Product 3', price: 20.0, imageUrl: 'lib/images/product3.png'),
+    Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg'),
+    Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg'),
+    Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg'),
   ];
 
   double get _totalAmount {
@@ -33,9 +33,32 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
   }
 
   void _removeItem(int index) {
-    setState(() {
-      _cartItems.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Item'),
+          content: const Text('Are you sure you want to remove this item from your cart?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Remove'),
+              onPressed: () {
+                setState(() {
+                  _cartItems.removeAt(index);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _incrementQuantity(int index) {
@@ -56,10 +79,20 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Cart'),
+        title: const Text('Your Cart', style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green,
       ),
       body: _cartItems.isEmpty
-          ? const Center(child: Text('Your cart is empty'))
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('lib/images/empty_cart.png', height: 200),
+            const SizedBox(height: 20),
+            const Text('Your cart is empty', style: TextStyle(fontSize: 18, fontFamily: 'Roboto')),
+          ],
+        ),
+      )
           : Column(
         children: [
           Expanded(
@@ -69,30 +102,47 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
                 final product = _cartItems[index];
                 return Card(
                   margin: const EdgeInsets.all(8.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 5,
                   child: ListTile(
-                    leading: Image.asset(
-                      product.imageUrl,
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset(
+                        product.imageUrl,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    title: Text(product.name),
-                    subtitle: Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                    trailing: SizedBox(
-                      width: 120,
+                    title: Text(
+                      product.name,
+                      style: const TextStyle(fontFamily: 'Roboto', fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'Price: \$${product.price.toStringAsFixed(2)}',
+                      style: const TextStyle(fontFamily: 'Roboto', fontSize: 14, color: Colors.grey),
+                    ),
+                    trailing: FittedBox(
+                      fit: BoxFit.scaleDown,
                       child: Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.remove),
+                            icon: const Icon(Icons.remove, color: Colors.red),
                             onPressed: () => _decrementQuantity(index),
                           ),
-                          Text(product.quantity.toString()),
+                          Text(
+                            product.quantity.toString(),
+                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
+                          ),
                           IconButton(
-                            icon: const Icon(Icons.add),
+                            icon: const Icon(Icons.add, color: Colors.green),
                             onPressed: () => _incrementQuantity(index),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete, color: Colors.grey),
                             onPressed: () => _removeItem(index),
                           ),
                         ],
@@ -108,19 +158,42 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Discount Code',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    prefixIcon: const Icon(Icons.discount),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Divider(color: Colors.grey),
                 Text(
                   'Total: \$${_totalAmount.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                  ),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                    // Add checkout logic here
+                    Navigator.pushReplacementNamed(context, '/checkout');
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
                   ),
-                  child: const Text('Proceed to Checkout'),
+                  child: const Text(
+                    'Proceed to Checkout',
+                    style: TextStyle(fontFamily: 'Roboto', fontSize: 18),
+                  ),
                 ),
               ],
             ),
