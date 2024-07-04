@@ -72,7 +72,7 @@ class OTPPageState extends State<OTPPage> {
                           });
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => ProductPage(products: productsList)),
+                            MaterialPageRoute(builder: (context) => ProductPage()),
                           );
                         } else {
                           setState(() {

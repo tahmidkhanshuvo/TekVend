@@ -1,5 +1,4 @@
 import '../pages.dart';
-
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
 
@@ -16,6 +15,8 @@ class ProductDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Image.asset(product.imageUrl),
+            const SizedBox(height: 16.0),
             Text(
               'Price: \$${product.price.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
