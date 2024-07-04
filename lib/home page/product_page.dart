@@ -1,24 +1,9 @@
 import '../pages.dart';
 
 class ProductPage extends StatelessWidget {
-  final List<Product> products = [
-    Product(
-      name: 'Product 1',
-      description: 'Description of Product 1',
-      price: 100.0,
-      discountPrice: 80.0,
-      specs: ['Spec 1: Value', 'Spec 2: Value'],
-      stock: 10,
-      reviews: ['Review 1: Good product!', 'Review 2: Excellent!'],
-      questions: ['Question 1: How many colors?', 'Question 2: Waterproof?'],
-    ),
-    // Add more products as needed
-  ];
+  final List<Product> products;
 
-   ProductPage({super.key}) {
-     // TODO: implement ProductPage
-     throw UnimplementedError();
-   }
+  ProductPage({Key? key, required this.products}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +51,7 @@ class ProductPage extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage('lib/images/product${index + 1}.jpg'),
+                    backgroundImage: AssetImage(products[index].imageUrl),
                   ),
                   title: Text(products[index].name),
                   subtitle: Text('Price: \$${products[index].price.toStringAsFixed(2)}'),

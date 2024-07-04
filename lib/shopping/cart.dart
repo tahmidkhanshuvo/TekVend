@@ -1,19 +1,5 @@
 import '../pages.dart';
 
-class Product {
-  final String name;
-  final double price;
-  final String imageUrl;
-  int quantity;
-
-  Product({
-    required this.name,
-    required this.price,
-    required this.imageUrl,
-    this.quantity = 1,
-  });
-}
-
 class ProductCartScreen extends StatefulWidget {
   const ProductCartScreen({Key? key}) : super(key: key);
 
@@ -23,9 +9,9 @@ class ProductCartScreen extends StatefulWidget {
 
 class _ProductCartScreenState extends State<ProductCartScreen> {
   final List<Product> _cartItems = [
-    Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg'),
-    Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg'),
-    Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg'),
+    Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg', description: ''),
+    Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg', description: ''),
+    Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg', description: ''),
   ];
 
   double get _totalAmount {
