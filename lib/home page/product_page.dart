@@ -135,13 +135,45 @@ class SwiperWidget extends StatefulWidget {
 }
 
 class _SwiperWidgetState extends State<SwiperWidget> {
+  late PageController _pageController;
   int _currentIndex = 0;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      if (_currentIndex < widget.products.length - 1) {
+        _currentIndex++;
+      } else {
+        _currentIndex = 0;
+      }
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         PageView.builder(
+          controller: _pageController,
           onPageChanged: (index) {
             setState(() {
               _currentIndex = index;
@@ -196,7 +228,8 @@ class _SwiperWidgetState extends State<SwiperWidget> {
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: CircleAvatar(
           radius: 5,
-          backgroundColor: index == _currentIndex ? Colors.blue : Colors.grey[400],
+          backgroundColor:
+          index == _currentIndex ? Colors.blue : Colors.grey[400],
         ),
       ),
     );

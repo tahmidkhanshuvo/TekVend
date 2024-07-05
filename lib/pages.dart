@@ -35,6 +35,7 @@ export 'package:firebase_storage/firebase_storage.dart';
 export 'dart:io';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:font_awesome_flutter/font_awesome_flutter.dart';
+export 'dart:async';
 
 
 
