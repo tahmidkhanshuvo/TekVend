@@ -1,4 +1,3 @@
-
 import '../pages.dart';
 
 class ProductPage extends StatefulWidget {
@@ -60,7 +59,7 @@ class _ProductPageState extends State<ProductPage> {
         },
         child: const Icon(Icons.chat),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -83,9 +82,7 @@ class _ProductPageState extends State<ProductPage> {
             const SizedBox(height: 8),
             const CategoriesWidget(),
             const SizedBox(height: 16),
-            Expanded(
-              child: ProductsGrid(products: productsList),
-            ),
+            ProductsGrid(products: productsList),
           ],
         ),
       ),
@@ -260,6 +257,8 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: products.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
