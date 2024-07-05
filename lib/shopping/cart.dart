@@ -62,6 +62,30 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
     });
   }
 
+  int _selectedIndex = 2; // Initial index for the Cart page
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.pushReplacementNamed(context, _getRouteName(index));
+  }
+
+  String _getRouteName(int index) {
+    switch (index) {
+      case 0:
+        return '/categories';
+      case 1:
+        return '/products';
+      case 2:
+        return '/cart';
+      case 3:
+        return '/profile';
+      default:
+        return '/products';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,39 +213,39 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const [
+        currentIndex: _selectedIndex, // Set the current index based on the selected index
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.category),
+            icon: Icon(
+              Icons.category,
+              color: _selectedIndex == 0 ? Colors.green : Colors.grey,
+            ),
             label: 'Categories',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+              color: _selectedIndex == 1 ? Colors.green : Colors.grey,
+            ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Icon(
+              Icons.shopping_cart,
+              color: _selectedIndex == 2 ? Colors.green : Colors.grey,
+            ),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(
+              Icons.person,
+              color: _selectedIndex == 3 ? Colors.green : Colors.grey,
+            ),
             label: 'Profile',
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/categories');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/products');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/cart');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          _onItemTapped(index);
         },
       ),
     );
