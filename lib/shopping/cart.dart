@@ -66,7 +66,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+        _selectedIndex = index;
     });
     Navigator.pushReplacementNamed(context, _getRouteName(index));
   }
@@ -76,13 +76,13 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       case 0:
         return '/categories';
       case 1:
-        return '/products';
-      case 2:
-        return '/cart';
+        return '/home';
+      /*case 2:
+        return '/cart'; */
       case 3:
         return '/profile';
       default:
-        return '/products';
+        return '/home';
     }
   }
 
