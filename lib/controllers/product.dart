@@ -1,4 +1,6 @@
 
+import '../pages.dart';
+
 
 class Product {
   final String name;
@@ -118,3 +120,6 @@ final List<Product> productsList = [
     imageUrl: 'lib/images/product8.jpg',
   ),
 ];
+
+
+
