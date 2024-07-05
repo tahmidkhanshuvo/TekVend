@@ -1,4 +1,3 @@
-
 import '../pages.dart';
 
 class ProductPage extends StatelessWidget {
@@ -43,7 +42,7 @@ class ProductPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             SizedBox(
-              height: 200,
+              height: MediaQuery.of(context).size.height * 0.3,
               child: SwiperWidget(products: productsList),
             ),
             const SizedBox(height: 16),
@@ -68,8 +67,8 @@ class ProductPage extends StatelessWidget {
             label: 'Categories',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Products',
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
@@ -83,19 +82,15 @@ class ProductPage extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-            // Navigate to Categories page
               Navigator.pushReplacementNamed(context, '/categories');
               break;
             case 1:
-            // Navigate to Product page
               Navigator.pushReplacementNamed(context, '/products');
               break;
             case 2:
-            // Navigate to Cart page
               Navigator.pushReplacementNamed(context, '/cart');
               break;
             case 3:
-            // Navigate to Profile page
               Navigator.pushReplacementNamed(context, '/profile');
               break;
           }
@@ -149,6 +144,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
                   child: Image.asset(
                     widget.products[index].imageUrl,
                     fit: BoxFit.cover,
+                    width: double.infinity,
                   ),
                 ),
               ),
@@ -175,8 +171,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: CircleAvatar(
           radius: 5,
-          backgroundColor:
-          index == _currentIndex ? Colors.blue : Colors.grey[400],
+          backgroundColor: index == _currentIndex ? Colors.blue : Colors.grey[400],
         ),
       ),
     );
@@ -189,7 +184,7 @@ class CategoriesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50,
+      height: 80,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: const [
@@ -214,10 +209,16 @@ class CategoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Chip(
-        avatar: Icon(icon, size: 20),
-        label: Text(name),
-        backgroundColor: Colors.grey[200],
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.grey[200],
+            child: Icon(icon, size: 30),
+          ),
+          const SizedBox(height: 5),
+          Text(name, style: TextStyle(fontSize: 12)),
+        ],
       ),
     );
   }
@@ -279,6 +280,8 @@ class ProductItem extends StatelessWidget {
           child: Image.asset(
             product.imageUrl,
             fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
         ),
       ),
