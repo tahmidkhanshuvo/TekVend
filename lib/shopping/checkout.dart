@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../pages.dart';
+
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({Key? key}) : super(key: key);
@@ -10,6 +9,30 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class CheckoutPageState extends State<CheckoutPage> {
+  int _selectedIndex = 2; // Initial index for the Cart page
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.pushReplacementNamed(context, _getRouteName(index));
+  }
+
+  String _getRouteName(int index) {
+    switch (index) {
+      case 0:
+        return '/categories';
+      case 1:
+        return '/home';
+      case 2:
+        return '/cart';
+      case 3:
+        return '/profile';
+      default:
+        return '/home';
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
 
   // Form field controllers
@@ -347,6 +370,44 @@ class CheckoutPageState extends State<CheckoutPage> {
             ],
           ),
         ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex, // Set the current index based on the selected index
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.category,
+              color: _selectedIndex == 0 ? Colors.green : Colors.grey,
+            ),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: _selectedIndex == 1 ? Colors.green : Colors.grey,
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.shopping_cart,
+              color: _selectedIndex == 2 ? Colors.green : Colors.grey,
+            ),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: _selectedIndex == 3 ? Colors.green : Colors.grey,
+            ),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          _onItemTapped(index);
+        },
       ),
     );
   }

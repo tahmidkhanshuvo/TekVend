@@ -8,6 +8,32 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+
+  int _selectedIndex = 3;
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      switch (index) {
+        case 0:
+          Navigator.pushReplacementNamed(context, '/categories');
+          break;
+        case 1:
+          Navigator.pushReplacementNamed(context, '/home');
+          break;
+        case 2:
+          Navigator.pushReplacementNamed(context, '/cart');
+          break;
+        case 3:
+
+          break;
+      }
+    }
+  }
+
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -241,6 +267,44 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ],
         ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex, // Set the current index based on the selected index
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.category,
+              color: _selectedIndex == 0 ? Colors.green : Colors.grey,
+            ),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: _selectedIndex == 1 ? Colors.green : Colors.grey,
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.shopping_cart,
+              color: _selectedIndex == 2 ? Colors.green : Colors.grey,
+            ),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: _selectedIndex == 3 ? Colors.green : Colors.grey,
+            ),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          _onItemTapped(index);
+        },
       ),
     );
   }
