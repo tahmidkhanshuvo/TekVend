@@ -82,7 +82,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       case 3:
         return '/profile';
       default:
-        return '/home';
+        return '/cart';
     }
   }
 
