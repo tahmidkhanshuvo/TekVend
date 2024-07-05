@@ -1,3 +1,4 @@
+
 import '../pages.dart';
 
 class ProductCartScreen extends StatefulWidget {
@@ -185,6 +186,43 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/categories');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/products');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/cart');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/profile');
+              break;
+          }
+        },
       ),
     );
   }
