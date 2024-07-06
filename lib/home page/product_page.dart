@@ -160,7 +160,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_pageController.hasClients) {
         if (_currentIndex < _slides.length - 1) {
           _currentIndex++;
