@@ -2,17 +2,24 @@
 //
 export 'user profile/profile.dart';
 
-
+//Shopping Page
 export 'shopping/cart.dart';
 export 'shopping/checkout.dart';
 export 'shopping/payment.dart';
 
 
 export 'images/images.dart';
+
+// Homepage Files
 export 'home page/chat_screen.dart';
 export 'home page/product_page.dart';
 export 'home page/details.dart';
+export 'home page/banner_widget.dart';
+export 'home page/categories_widget.dart';
+export 'home page/products_grid.dart';
+export 'home page/product_search_delegate.dart';
 
+// All Controller Pages
 export 'controllers/message.dart';
 export 'controllers/product.dart';
 export 'controllers/upload.dart';
@@ -20,6 +27,7 @@ export 'controllers/user.dart';
 export 'controllers/address.dart';
 export 'controllers/cartcontroller.dart';
 
+// Auth screen pages
 export 'auth screen/sign_up_screen.dart';
 export 'auth screen/sign_in_screen.dart';
 export 'auth screen/otp_page.dart';
@@ -28,7 +36,7 @@ export 'auth screen/otp_page.dart';
 
 
 
-
+// All Packages Needed
 export 'package:firebase_auth/firebase_auth.dart';
 export 'package:flutter/gestures.dart';
 export 'package:flutter/material.dart';
@@ -48,6 +56,7 @@ export 'dart:async';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'dart:convert';
 export 'package:get/get.dart';
+export 'dart:async';
 
 
 
