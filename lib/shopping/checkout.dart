@@ -1,13 +1,23 @@
 import '../pages.dart';
 
-class CheckoutPage extends StatelessWidget {
-  final UserController userController = Get.find();
+class CheckoutPage extends StatefulWidget {
+  const CheckoutPage({Key? key}) : super(key: key);
+
+  @override
+  _CheckoutPageState createState() => _CheckoutPageState();
+}
+
+class _CheckoutPageState extends State<CheckoutPage> {
+  final CartController cartController = Get.find<CartController>();
+  final UserController userController = Get.put(UserController());
 
   int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     if (_selectedIndex != index) {
-      _selectedIndex = index;
+      setState(() {
+        _selectedIndex = index;
+      });
       switch (index) {
         case 0:
           Get.toNamed('/categories');
@@ -16,7 +26,6 @@ class CheckoutPage extends StatelessWidget {
           Get.toNamed('/home');
           break;
         case 2:
-        // Optional: Add logic for the current screen (CheckoutPage)
           break;
         case 3:
           Get.toNamed('/profile');
@@ -45,7 +54,9 @@ class CheckoutPage extends StatelessWidget {
                 items: userController.addresses.map((address) {
                   return DropdownMenuItem<Map<String, String>>(
                     value: address,
-                    child: Text('${address['address']}, ${address['city']}, ${address['state']}, ${address['zip']}'),
+                    child: Text(
+                      '${address['address'] ?? ''}, ${address['city'] ?? ''}, ${address['state'] ?? ''}, ${address['zip'] ?? ''}',
+                    ),
                   );
                 }).toList(),
                 onChanged: (newAddress) {
@@ -76,29 +87,26 @@ class CheckoutPage extends StatelessWidget {
             const SizedBox(height: 20),
             const Text('Order Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-            // Placeholder for order summary details
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Replace with your order summary details here
-                    ListTile(
-                      title: Text('Product 1'),
-                      subtitle: Text('Quantity: 2'),
-                      trailing: Text('\$20'),
-                    ),
-                    ListTile(
-                      title: Text('Product 2'),
-                      subtitle: Text('Quantity: 1'),
-                      trailing: Text('\$15'),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      title: Text('Total'),
-                      trailing: Text('\$35'),
-                    ),
-                  ],
-                ),
+                child: Obx(() {
+                  return Column(
+                    children: [
+                      ...cartController.cartProducts.map((product) {
+                        return ListTile(
+                          title: Text(product['productName'] ?? ''),
+                          subtitle: Text('Quantity: ${product['quantity']}'),
+                          trailing: Text('\$${product['quantity'] * product['price']}'),
+                        );
+                      }).toList(),
+                      const Divider(),
+                      ListTile(
+                        title: const Text('Total'),
+                        trailing: Text('\$${cartController.totalPrice.toStringAsFixed(2)}'),
+                      ),
+                    ],
+                  );
+                }),
               ),
             ),
             const Spacer(),

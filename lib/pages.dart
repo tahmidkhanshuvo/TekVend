@@ -18,6 +18,7 @@ export 'controllers/product.dart';
 export 'controllers/upload.dart';
 export 'controllers/user.dart';
 export 'controllers/address.dart';
+export 'controllers/cartcontroller.dart';
 
 export 'auth screen/sign_up_screen.dart';
 export 'auth screen/sign_in_screen.dart';

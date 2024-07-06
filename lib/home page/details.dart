@@ -10,6 +10,7 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  final CartController cartController = Get.put(CartController());
 
   int selectedIndex = 2;
 
@@ -24,7 +25,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           Get.toNamed('/home');
           break;
         case 2:
-
           break;
         case 3:
           Get.toNamed('/profile');
@@ -49,10 +49,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
-  Future<void> _addToCart() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cartItems = prefs.getStringList('cartItems') ?? [];
-
+  void _addToCart() {
     final productMap = {
       'name': widget.product.name,
       'price': widget.product.price,
@@ -67,8 +64,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       'questions': widget.product.questions,
     };
 
-    cartItems.add(json.encode(productMap));
-    await prefs.setStringList('cartItems', cartItems);
+    cartController.addProduct(productMap);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
