@@ -1,7 +1,29 @@
-import '../pages.dart';
+import '../pages.dart';// Adjust import path as per your project structure
 
 class CheckoutPage extends StatelessWidget {
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find();
+
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex != index) {
+      _selectedIndex = index;
+      switch (index) {
+        case 0:
+          Get.toNamed('/categories');
+          break;
+        case 1:
+          Get.toNamed('/home');
+          break;
+        case 2:
+        // Optional: Add logic for the current screen (CheckoutPage)
+          break;
+        case 3:
+          Get.toNamed('/profile');
+          break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +91,43 @@ class CheckoutPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.category,
+              color: _selectedIndex == 0 ? Colors.green : Colors.grey,
+            ),
+            label: 'Categories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: _selectedIndex == 1 ? Colors.green : Colors.grey,
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.shopping_cart,
+              color: _selectedIndex == 2 ? Colors.green : Colors.grey,
+            ),
+            label: 'Cart',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person,
+              color: _selectedIndex == 3 ? Colors.green : Colors.grey,
+            ),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) => _onItemTapped(index),
+      ),
     );
   }
 }
+
+

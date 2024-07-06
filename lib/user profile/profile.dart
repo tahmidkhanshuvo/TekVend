@@ -173,80 +173,42 @@ class UserProfileScreen extends StatelessWidget {
       }),
       bottomNavigationBar: Obx(() {
         return BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           currentIndex: userController.selectedIndex.value,
-          items: const <BottomNavigationBarItem>[
+          onTap: userController.onItemTapped,
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
+              icon: Icon(
+                Icons.category,
+                color: userController.selectedIndex.value == 0 ? Colors.green : Colors.grey,
+              ),
               label: 'Categories',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(
+                Icons.home,
+                color: userController.selectedIndex.value == 1 ? Colors.green : Colors.grey,
+              ),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
+              icon: Icon(
+                Icons.shopping_cart,
+                color: userController.selectedIndex.value == 2 ? Colors.green : Colors.grey,
+              ),
               label: 'Cart',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(
+                Icons.person,
+                color: userController.selectedIndex.value == 3 ? Colors.green : Colors.grey,
+              ),
               label: 'Profile',
             ),
           ],
-          onTap: userController.onItemTapped,
         );
       }),
-    );
-  }
-}
 
-class AddressForm extends StatelessWidget {
-  final void Function(Map<String, String>) onSave;
-  final addressController = TextEditingController();
-  final cityController = TextEditingController();
-  final stateController = TextEditingController();
-  final zipController = TextEditingController();
-
-  AddressForm({required this.onSave});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          TextField(
-            controller: addressController,
-            decoration: const InputDecoration(labelText: 'Address'),
-          ),
-          TextField(
-            controller: cityController,
-            decoration: const InputDecoration(labelText: 'City'),
-          ),
-          TextField(
-            controller: stateController,
-            decoration: const InputDecoration(labelText: 'State'),
-          ),
-          TextField(
-            controller: zipController,
-            decoration: const InputDecoration(labelText: 'ZIP Code'),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              onSave({
-                'address': addressController.text,
-                'city': cityController.text,
-                'state': stateController.text,
-                'zip': zipController.text,
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.green,
-            ),
-            child: const Text('Save Address'),
-          ),
-        ],
-      ),
     );
   }
 }
