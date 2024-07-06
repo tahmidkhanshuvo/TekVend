@@ -13,10 +13,9 @@ class UserController extends GetxController {
   var phoneController = TextEditingController();
   var dobController = TextEditingController();
   var genderController = TextEditingController();
-  var addressController = TextEditingController();
 
-  // Observable for selectedIndex
   var selectedIndex = 3.obs;
+  var addresses = <Map<String, String>>[].obs;
 
   @override
   void onInit() {
@@ -34,8 +33,11 @@ class UserController extends GetxController {
       phoneController.text = userDataSnapshot['phoneNumber'];
       dobController.text = userDataSnapshot['dob'] ?? '';
       genderController.text = userDataSnapshot['gender'] ?? '';
-      addressController.text = userDataSnapshot['address'] ?? '';
       profileImageUrl.value = userDataSnapshot['profileImageUrl'] ?? 'default_image_url';
+
+      // Fetch addresses
+      QuerySnapshot addressSnapshot = await _firestore.collection('users').doc(currentUser.value!.uid).collection('addresses').get();
+      addresses.value = addressSnapshot.docs.map((doc) => Map<String, String>.from(doc.data() as Map)).toList();
     }
   }
 
@@ -48,9 +50,15 @@ class UserController extends GetxController {
         'phoneNumber': phoneController.text,
         'dob': dobController.text,
         'gender': genderController.text,
-        'address': addressController.text,
         'profileImageUrl': profileImageUrl.value,
       });
+    }
+  }
+
+  Future<void> addNewAddress(Map<String, String> newAddress) async {
+    if (currentUser.value != null) {
+      await _firestore.collection('users').doc(currentUser.value!.uid).collection('addresses').add(newAddress);
+      addresses.add(newAddress);
     }
   }
 
@@ -67,11 +75,8 @@ class UserController extends GetxController {
       String fileName = '${currentUser.value!.uid}.png';
 
       try {
-        // Upload image to Firebase Storage
         TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child('profile_images/$fileName').putFile(imageFile);
         String downloadUrl = await snapshot.ref.getDownloadURL();
-
-        // Update Firestore with new image URL
         profileImageUrl.value = downloadUrl;
         await updateUserData();
       } catch (e) {
@@ -94,18 +99,13 @@ class UserController extends GetxController {
           Get.offAllNamed('/cart');
           break;
         case 3:
-        // Already on profile screen
           break;
       }
     }
   }
 
   Future<String> getInitialRoute() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simulate some delay
-    if (currentUser.value != null) {
-      return '/home';
-    } else {
-      return '/signin';
-    }
+    await Future.delayed(Duration(seconds: 1));
+    return currentUser.value != null ? '/home' : '/signin';
   }
 }

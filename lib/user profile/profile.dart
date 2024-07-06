@@ -28,7 +28,7 @@ class UserProfileScreen extends StatelessWidget {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: userController.profileImageUrl.value == 'default_image_url'
-                        ? const AssetImage('lib/images/default_profile.png') // Default profile image path
+                        ? const AssetImage('lib/images/default_profile.png')
                         : NetworkImage(userController.profileImageUrl.value) as ImageProvider,
                   ),
                 ),
@@ -82,68 +82,40 @@ class UserProfileScreen extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.home),
                 title: const Text('Shipping Address'),
-                subtitle: Text(userController.addressController.text),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Edit Profile'),
-                      content: SingleChildScrollView(
-                        child: Column(
+                subtitle: Obx(() {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ...userController.addresses.map((address) => ListTile(
+                        title: Text(address.street),
+                        subtitle: Text('${address.city}, ${address.state}, ${address.zip}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            TextField(
-                              controller: userController.nameController,
-                              decoration: const InputDecoration(labelText: 'Name'),
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                userController.editAddress(address);
+                              },
                             ),
-                            TextField(
-                              controller: userController.emailController,
-                              decoration: const InputDecoration(labelText: 'Email'),
-                            ),
-                            TextField(
-                              controller: userController.phoneController,
-                              decoration: const InputDecoration(labelText: 'Phone'),
-                            ),
-                            TextField(
-                              controller: userController.dobController,
-                              decoration: const InputDecoration(labelText: 'Date of Birth'),
-                            ),
-                            TextField(
-                              controller: userController.genderController,
-                              decoration: const InputDecoration(labelText: 'Gender'),
-                            ),
-                            TextField(
-                              controller: userController.addressController,
-                              decoration: const InputDecoration(labelText: 'Shipping Address'),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                userController.deleteAddress(address.id);
+                              },
                             ),
                           ],
                         ),
+                      )),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          userController.addNewAddress();
+                        },
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            userController.updateUserData();
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Save'),
-                        ),
-                      ],
-                    ),
+                    ],
                   );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.green,
-                ),
-                child: const Text('Edit Profile'),
+                }),
               ),
             ],
           ),
