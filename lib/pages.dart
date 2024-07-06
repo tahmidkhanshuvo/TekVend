@@ -12,6 +12,7 @@ export 'home page/details.dart';
 
 export 'controllers/message.dart';
 export 'controllers/product.dart';
+export 'controllers/upload.dart';
 
 export 'auth screen/sign_up_screen.dart';
 export 'auth screen/sign_in_screen.dart';
@@ -36,6 +37,8 @@ export 'dart:io';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:font_awesome_flutter/font_awesome_flutter.dart';
 export 'dart:async';
+
+
 
 
 

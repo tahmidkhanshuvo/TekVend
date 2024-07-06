@@ -1,24 +1,26 @@
-
 import '../pages.dart';
-
 
 class Product {
   final String name;
   final double price;
   final String imageUrl;
-  final String description; // New field for product details
-  double discountPrice; // New field for product details
-  List<String> specs; // New field for product details
-  int stock; // New field for product details
-  List<String> reviews; // New field for product details
-  List<String> questions; // New field for product details
-  int quantity; // Field used in the cart
+  final String description;
+  final String category; // New field for category
+  final String brand; // New field for brand
+  double discountPrice;
+  List<String> specs;
+  int stock;
+  List<String> reviews;
+  List<String> questions;
+  int quantity;
 
   Product({
     required this.name,
     required this.price,
     required this.imageUrl,
     required this.description,
+    required this.category,
+    required this.brand,
     this.discountPrice = 0,
     this.specs = const [],
     this.stock = 0,
@@ -26,100 +28,53 @@ class Product {
     this.questions = const [],
     this.quantity = 1,
   });
+
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return Product(
+      name: data['name'] ?? '',
+      price: (data['price'] ?? 0.0).toDouble(),
+      imageUrl: data['imageUrl'] ?? '',
+      description: data['description'] ?? '',
+      category: data['category'] ?? '',
+      brand: data['brand'] ?? '',
+      discountPrice: (data['discountPrice'] ?? 0.0).toDouble(),
+      specs: List<String>.from(data['specs'] ?? []),
+      stock: data['stock'] ?? 0,
+      reviews: List<String>.from(data['reviews'] ?? []),
+      questions: List<String>.from(data['questions'] ?? []),
+      quantity: data['quantity'] ?? 1,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'price': price,
+      'imageUrl': imageUrl,
+      'description': description,
+      'category': category,
+      'brand': brand,
+      'discountPrice': discountPrice,
+      'specs': specs,
+      'stock': stock,
+      'reviews': reviews,
+      'questions': questions,
+      'quantity': quantity,
+    };
+  }
 }
 
+class ProductUploader {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
-final List<Product> productsList = [
-  Product(
-    name: 'Product 1',
-    description: 'Description of Product 1',
-    price: 100.0,
-    discountPrice: 80.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 10,
-    reviews: ['Review 1: Good product!', 'Review 2: Excellent!'],
-    questions: ['Question 1: How many colors?', 'Question 2: Waterproof?'],
-    imageUrl: 'lib/images/product1.jpg',
-  ),
-  Product(
-    name: 'Product 2',
-    description: 'Description of Product 2',
-    price: 120.0,
-    discountPrice: 100.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 15,
-    reviews: ['Review 1: Great product!', 'Review 2: Awesome!'],
-    questions: ['Question 1: What materials?', 'Question 2: Warranty?'],
-    imageUrl: 'lib/images/product2.jpg',
-  ),
-  Product(
-    name: 'Product 3',
-    description: 'Description of Product 3',
-    price: 80.0,
-    discountPrice: 70.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 20,
-    reviews: ['Review 1: Nice product!', 'Review 2: Impressive!'],
-    questions: ['Question 1: Size options?', 'Question 2: Return policy?'],
-    imageUrl: 'lib/images/product3.jpg',
-  ),
-  Product(
-    name: 'Product 4',
-    description: 'Description of Product 4',
-    price: 150.0,
-    discountPrice: 120.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 12,
-    reviews: ['Review 1: Solid product!', 'Review 2: Recommended!'],
-    questions: ['Question 1: Shipping time?', 'Question 2: Assembly required?'],
-    imageUrl: 'lib/images/product4.jpg',
-  ),
-  Product(
-    name: 'Product 5',
-    description: 'Description of Product 5',
-    price: 200.0,
-    discountPrice: 180.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 8,
-    reviews: ['Review 1: High quality!', 'Review 2: Worth it!'],
-    questions: ['Question 1: Features?', 'Question 2: Durability?'],
-    imageUrl: 'lib/images/product5.jpg',
-  ),
-  Product(
-    name: 'Product 6',
-    description: 'Description of Product 6',
-    price: 90.0,
-    discountPrice: 80.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 18,
-    reviews: ['Review 1: Functional!', 'Review 2: Sturdy!'],
-    questions: ['Question 1: Compatibility?', 'Question 2: Maintenance?'],
-    imageUrl: 'lib/images/product6.jpg',
-  ),
-  Product(
-    name: 'Product 7',
-    description: 'Description of Product 7',
-    price: 110.0,
-    discountPrice: 95.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 14,
-    reviews: ['Review 1: Elegant product!', 'Review 2: Excellent design!'],
-    questions: ['Question 1: Power consumption?', 'Question 2: User manual available?'],
-    imageUrl: 'lib/images/product7.jpg',
-  ),
-  Product(
-    name: 'Product 8',
-    description: 'Description of Product 8',
-    price: 130.0,
-    discountPrice: 110.0,
-    specs: ['Spec 1: Value', 'Spec 2: Value'],
-    stock: 16,
-    reviews: ['Review 1: Great value!', 'Review 2: Perfect!'],
-    questions: ['Question 1: Warranty period?', 'Question 2: Product dimensions?'],
-    imageUrl: 'lib/images/product8.jpg',
-  ),
-];
-
-
+  Future<void> uploadProduct(Product product) async {
+    try {
+      await _firestore.collection('products').add(product.toMap());
+      print('Product uploaded successfully');
+    } catch (e) {
+      print('Error uploading product: $e');
+    }
+  }
+}
 

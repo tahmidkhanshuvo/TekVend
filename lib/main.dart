@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/home',
+      initialRoute: '/upload',
       routes: {
         '/home': (context) =>  ProductPage(),
         '/signin': (context) =>  const SignInScreen(),
@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const UserProfileScreen(),
         '/cart': (context) => const ProductCartScreen(),
         '/checkout': (context) => const CheckoutPage(),
+        '/upload': (context) => UploadProductPage(),
       },
     );
   }

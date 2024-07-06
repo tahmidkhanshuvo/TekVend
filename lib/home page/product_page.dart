@@ -1,7 +1,7 @@
 import '../pages.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({super.key});
+  const ProductPage({Key? key}) : super(key: key);
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -82,7 +82,8 @@ class _ProductPageState extends State<ProductPage> {
             const SizedBox(height: 8),
             const CategoriesWidget(),
             const SizedBox(height: 16),
-            ProductsGrid(products: productsList),
+            // Use ProductsGrid with a stream of products
+            ProductsGrid(productsStream: _getProductsStream()),
           ],
         ),
       ),
@@ -123,7 +124,17 @@ class _ProductPageState extends State<ProductPage> {
       ),
     );
   }
+
+  // Example method to fetch products from Firestore as a stream
+  Stream<List<Product>> _getProductsStream() {
+    return FirebaseFirestore.instance.collection('products').snapshots().map(
+          (snapshot) => snapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList(),
+    );
+  }
 }
+
 
 class SwiperWidget extends StatefulWidget {
   @override
@@ -316,24 +327,36 @@ class CategoryItem extends StatelessWidget {
 }
 
 class ProductsGrid extends StatelessWidget {
-  final List<Product> products;
+  final Stream<List<Product>> productsStream;
 
-  const ProductsGrid({super.key, required this.products});
+  const ProductsGrid({Key? key, required this.productsStream}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: products.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 2 / 3,
-      ),
-      itemBuilder: (context, index) {
-        return ProductItem(product: products[index]);
+    return StreamBuilder<List<Product>>(
+      stream: productsStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        List<Product> products = snapshot.data ?? [];
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: products.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 2 / 3,
+          ),
+          itemBuilder: (context, index) {
+            return ProductItem(product: products[index]);
+          },
+        );
       },
     );
   }
@@ -342,7 +365,7 @@ class ProductsGrid extends StatelessWidget {
 class ProductItem extends StatelessWidget {
   final Product product;
 
-  const ProductItem({super.key, required this.product});
+  const ProductItem({Key? key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -370,14 +393,59 @@ class ProductItem extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15),
-          child: Image.asset(
-            product.imageUrl,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '\$${product.price.toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Category: ${product.category}',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      'Brand: ${product.brand}',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailsPage(product: product),
+                    ),
+                  );
+                },
+                child: const Text('Buy'),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+

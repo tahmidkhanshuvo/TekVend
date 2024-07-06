@@ -10,9 +10,9 @@ class ProductCartScreen extends StatefulWidget {
 
 class _ProductCartScreenState extends State<ProductCartScreen> {
   final List<Product> _cartItems = [
-    Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg', description: ''),
-    Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg', description: ''),
-    Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg', description: ''),
+    //Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg', description: ''),
+    //Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg', description: ''),
+    //Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg', description: ''),
   ];
 
   double get _totalAmount {
@@ -62,27 +62,27 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
     });
   }
 
-  int _selectedIndex = 2; // Initial index for the Cart page
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
-    setState(() {
+    if (_selectedIndex != index) {
+      setState(() {
         _selectedIndex = index;
-    });
-    Navigator.pushReplacementNamed(context, _getRouteName(index));
-  }
+      });
+      switch (index) {
+        case 0:
+          Navigator.pushReplacementNamed(context, '/categories');
+          break;
+        case 1:
+          Navigator.pushReplacementNamed(context, '/home');
+          break;
+        case 2:
 
-  String _getRouteName(int index) {
-    switch (index) {
-      case 0:
-        return '/categories';
-      case 1:
-        return '/home';
-      /*case 2:
-        return '/cart'; */
-      case 3:
-        return '/profile';
-      default:
-        return '/cart';
+          break;
+        case 3:
+          Navigator.pushReplacementNamed(context, '/profile');
+          break;
+      }
     }
   }
 
