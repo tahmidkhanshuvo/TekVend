@@ -26,6 +26,35 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
+  Future<void> _addToCart() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartItems = prefs.getStringList('cartItems') ?? [];
+
+    final productMap = {
+      'name': widget.product.name,
+      'price': widget.product.price,
+      'quantity': _quantity,
+      'imageUrl': widget.product.imageUrl,
+      'description': widget.product.description,
+      'stock': widget.product.stock,
+      'brand': widget.product.brand,
+      'discountPrice': widget.product.discountPrice,
+      'specs': widget.product.specs,
+      'reviews': widget.product.reviews,
+      'questions': widget.product.questions,
+    };
+
+    cartItems.add(json.encode(productMap));
+    await prefs.setStringList('cartItems', cartItems);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Item added to cart'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +72,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
                   widget.product.imageUrl,
-                  fit: BoxFit.contain, // Ensures the entire image is visible
+                  fit: BoxFit.contain,
                   height: 250.0,
                   width: double.infinity,
                 ),
@@ -87,7 +116,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             padding: const EdgeInsets.symmetric(vertical: 4.0),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.red[100], // Background color for discount price
+                              color: Colors.red[100],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -95,8 +124,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 'Discount Price: \$${widget.product.discountPrice.toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors.red, // Text color for discount price
-                                  decoration: TextDecoration.lineThrough, // Strike-through effect
+                                  color: Colors.red,
+                                  decoration: TextDecoration.lineThrough,
                                 ),
                               ),
                             ),
@@ -147,12 +176,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
                 // Buy Now Button
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle Buy Now action
-                  },
+                  onPressed: _addToCart,
                   child: const Text('Buy Now'),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Green color for button
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
                     ),
@@ -175,7 +202,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
-                  color: Colors.grey[200], // Background color for specifications
+                  color: Colors.grey[200],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),

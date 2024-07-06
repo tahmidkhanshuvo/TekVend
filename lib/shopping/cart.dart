@@ -1,4 +1,3 @@
-
 import '../pages.dart';
 
 class ProductCartScreen extends StatefulWidget {
@@ -9,57 +8,52 @@ class ProductCartScreen extends StatefulWidget {
 }
 
 class _ProductCartScreenState extends State<ProductCartScreen> {
-  final List<Product> _cartItems = [
-    //Product(name: 'Logitech M199', price: 10.0, imageUrl: 'lib/images/product1.jpg', description: ''),
-    //Product(name: 'MSI MAG Gaming Monitor', price: 15.0, imageUrl: 'lib/images/product2.jpg', description: ''),
-    //Product(name: 'Keycron M1 Mechanical Keyboard', price: 20.0, imageUrl: 'lib/images/product3.jpg', description: ''),
-  ];
+  List<Map<String, dynamic>> _cartItems = [];
 
-  double get _totalAmount {
-    return _cartItems.fold(0, (total, current) => total + (current.price * current.quantity));
+  @override
+  void initState() {
+    super.initState();
+    _loadCartItems();
   }
 
-  void _removeItem(int index) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Remove Item'),
-          content: const Text('Are you sure you want to remove this item from your cart?'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Remove'),
-              onPressed: () {
-                setState(() {
-                  _cartItems.removeAt(index);
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> _loadCartItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cartItems = prefs.getStringList('cartItems') ?? [];
+    setState(() {
+      _cartItems = cartItems.map((item) => json.decode(item) as Map<String, dynamic>).toList();
+    });
+  }
+
+  Future<void> _saveCartItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    final updatedCartItems = _cartItems.map((item) => json.encode(item)).toList();
+    await prefs.setStringList('cartItems', updatedCartItems);
+  }
+
+  Future<void> _removeFromCart(int index) async {
+    _cartItems.removeAt(index);
+    await _saveCartItems();
+    setState(() {});
   }
 
   void _incrementQuantity(int index) {
     setState(() {
-      _cartItems[index].quantity++;
+      _cartItems[index]['quantity']++;
     });
+    _saveCartItems();
   }
 
   void _decrementQuantity(int index) {
     setState(() {
-      if (_cartItems[index].quantity > 1) {
-        _cartItems[index].quantity--;
+      if (_cartItems[index]['quantity'] > 1) {
+        _cartItems[index]['quantity']--;
       }
     });
+    _saveCartItems();
+  }
+
+  double get _totalAmount {
+    return _cartItems.fold(0, (total, current) => total + (current['price'] * current['quantity']));
   }
 
   int _selectedIndex = 2;
@@ -85,7 +79,6 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +103,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
             child: ListView.builder(
               itemCount: _cartItems.length,
               itemBuilder: (context, index) {
-                final product = _cartItems[index];
+                final item = _cartItems[index];
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   shape: RoundedRectangleBorder(
@@ -121,19 +114,19 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
                     contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.asset(
-                        product.imageUrl,
+                      child: Image.network(
+                        item['imageUrl'],
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,
                       ),
                     ),
                     title: Text(
-                      product.name,
+                      item['name'],
                       style: const TextStyle(fontFamily: 'Roboto', fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      'Price: \$${product.price.toStringAsFixed(2)}',
+                      'Price: \$${item['price'].toStringAsFixed(2)}',
                       style: const TextStyle(fontFamily: 'Roboto', fontSize: 14, color: Colors.grey),
                     ),
                     trailing: FittedBox(
@@ -145,7 +138,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
                             onPressed: () => _decrementQuantity(index),
                           ),
                           Text(
-                            product.quantity.toString(),
+                            item['quantity'].toString(),
                             style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
                           ),
                           IconButton(
@@ -154,7 +147,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.grey),
-                            onPressed: () => _removeItem(index),
+                            onPressed: () => _removeFromCart(index),
                           ),
                         ],
                       ),
@@ -213,7 +206,7 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex, // Set the current index based on the selected index
+        currentIndex: _selectedIndex,
         items: [
           BottomNavigationBarItem(
             icon: Icon(
