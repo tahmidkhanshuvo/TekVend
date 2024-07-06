@@ -3,7 +3,7 @@ import '../pages.dart';
 class ProductDetailsPage extends StatefulWidget {
   final Product product;
 
-  const ProductDetailsPage({super.key, required this.product});
+  const ProductDetailsPage({Key? key, required this.product}) : super(key: key);
 
   @override
   _ProductDetailsPageState createState() => _ProductDetailsPageState();

@@ -135,12 +135,10 @@ class _ProductPageState extends State<ProductPage> {
   }
 }
 
-
 class SwiperWidget extends StatefulWidget {
   @override
   _SwiperWidgetState createState() => _SwiperWidgetState();
 }
-
 
 class _SwiperWidgetState extends State<SwiperWidget> {
   late PageController _pageController;
@@ -399,7 +397,7 @@ class ProductItem extends StatelessWidget {
               Expanded(
                 child: Image.network(
                   product.imageUrl,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain, // Changed from BoxFit.cover to BoxFit.contain
                 ),
               ),
               Padding(
@@ -448,4 +446,3 @@ class ProductItem extends StatelessWidget {
     );
   }
 }
-
