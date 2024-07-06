@@ -18,8 +18,7 @@ class UserProfileScreen extends StatelessWidget {
       body: Obx(() {
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: ListView(
             children: [
               const SizedBox(height: 20),
               Center(
@@ -79,43 +78,94 @@ class UserProfileScreen extends StatelessWidget {
                 title: const Text('Gender'),
                 subtitle: Text(userController.genderController.text),
               ),
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Shipping Address'),
-                subtitle: Obx(() {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ...userController.addresses.map((address) => ListTile(
-                        title: Text(address.street),
-                        subtitle: Text('${address.city}, ${address.state}, ${address.zip}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+              const SizedBox(height: 20),
+              const Text('Addresses', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Obx(() {
+                return Column(
+                  children: userController.addresses.map((address) {
+                    return ListTile(
+                      leading: const Icon(Icons.home),
+                      title: Text('${address['address']}, ${address['city']}, ${address['state']}, ${address['zip']}'),
+                    );
+                  }).toList(),
+                );
+              }),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Add New Address'),
+                      content: AddressForm(onSave: (newAddress) {
+                        userController.addNewAddress(newAddress);
+                        Navigator.of(context).pop();
+                      }),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text('Add New Address'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Edit Profile'),
+                      content: SingleChildScrollView(
+                        child: Column(
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                userController.editAddress(address);
-                              },
+                            TextField(
+                              controller: userController.nameController,
+                              decoration: const InputDecoration(labelText: 'Name'),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                userController.deleteAddress(address.id);
-                              },
+                            TextField(
+                              controller: userController.emailController,
+                              decoration: const InputDecoration(labelText: 'Email'),
+                            ),
+                            TextField(
+                              controller: userController.phoneController,
+                              decoration: const InputDecoration(labelText: 'Phone'),
+                            ),
+                            TextField(
+                              controller: userController.dobController,
+                              decoration: const InputDecoration(labelText: 'Date of Birth'),
+                            ),
+                            TextField(
+                              controller: userController.genderController,
+                              decoration: const InputDecoration(labelText: 'Gender'),
                             ),
                           ],
                         ),
-                      )),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          userController.addNewAddress();
-                        },
                       ),
-                    ],
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            userController.updateUserData();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    ),
                   );
-                }),
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text('Edit Profile'),
               ),
             ],
           ),
@@ -123,11 +173,10 @@ class UserProfileScreen extends StatelessWidget {
       }),
       bottomNavigationBar: Obx(() {
         return BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
           currentIndex: userController.selectedIndex.value,
-          items: const [
+          items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.category),
+              icon: Icon(Icons.dashboard),
               label: 'Categories',
             ),
             BottomNavigationBarItem(
@@ -146,6 +195,58 @@ class UserProfileScreen extends StatelessWidget {
           onTap: userController.onItemTapped,
         );
       }),
+    );
+  }
+}
+
+class AddressForm extends StatelessWidget {
+  final void Function(Map<String, String>) onSave;
+  final addressController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final zipController = TextEditingController();
+
+  AddressForm({required this.onSave});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          TextField(
+            controller: addressController,
+            decoration: const InputDecoration(labelText: 'Address'),
+          ),
+          TextField(
+            controller: cityController,
+            decoration: const InputDecoration(labelText: 'City'),
+          ),
+          TextField(
+            controller: stateController,
+            decoration: const InputDecoration(labelText: 'State'),
+          ),
+          TextField(
+            controller: zipController,
+            decoration: const InputDecoration(labelText: 'ZIP Code'),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              onSave({
+                'address': addressController.text,
+                'city': cityController.text,
+                'state': stateController.text,
+                'zip': zipController.text,
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+            ),
+            child: const Text('Save Address'),
+          ),
+        ],
+      ),
     );
   }
 }

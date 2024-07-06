@@ -1,45 +1,7 @@
 import '../pages.dart';
 
-class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key? key}) : super(key: key);
-
-  @override
-  CheckoutPageState createState() => CheckoutPageState();
-}
-
-class CheckoutPageState extends State<CheckoutPage> {
-  int _selectedIndex = 2; // Initial index for the Cart page
-  String? _selectedAddressId;
-  final UserController userController = Get.find<UserController>();
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedAddressId = userController.addresses.isNotEmpty ? userController.addresses.first.id : null;
-  }
-
-  void _onItemTapped(int index) {
-    if (_selectedIndex != index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-
-      switch (index) {
-        case 0:
-          Get.toNamed('/categories');
-          break;
-        case 1:
-          Get.toNamed('/home');
-          break;
-        case 2:
-          Get.toNamed('/checkout');
-          break;
-        case 3:
-          Get.toNamed('/profile');
-          break;
-      }
-    }
-  }
+class CheckoutPage extends StatelessWidget {
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -47,53 +9,65 @@ class CheckoutPageState extends State<CheckoutPage> {
       appBar: AppBar(
         title: const Text('Checkout'),
       ),
-      body: Column(
-        children: [
-          // Address Selection
-          ListTile(
-            title: const Text('Shipping Address'),
-            subtitle: Obx(() {
-              return DropdownButton<String>(
-                value: _selectedAddressId,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedAddressId = newValue;
-                  });
-                },
-                items: userController.addresses.map((Address address) {
-                  return DropdownMenuItem<String>(
-                    value: address.id,
-                    child: Text('${address.street}, ${address.city}, ${address.state}, ${address.zip}'),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Shipping Address', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Obx(() {
+              return DropdownButton<Map<String, String>>(
+                isExpanded: true,
+                value: userController.addresses.isEmpty ? null : userController.addresses.first,
+                items: userController.addresses.map((address) {
+                  return DropdownMenuItem<Map<String, String>>(
+                    value: address,
+                    child: Text('${address['address']}, ${address['city']}, ${address['state']}, ${address['zip']}'),
                   );
                 }).toList(),
+                onChanged: (newAddress) {
+                  // Handle address selection
+                },
               );
             }),
-          ),
-          // Other checkout details (e.g., payment method, order summary, etc.)
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        onTap: _onItemTapped,
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Add New Address'),
+                    content: AddressForm(onSave: (newAddress) {
+                      userController.addNewAddress(newAddress);
+                      Navigator.of(context).pop();
+                    }),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Add New Address'),
+            ),
+            const SizedBox(height: 20),
+            const Text('Order Summary', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            // Add your order summary details here
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                // Handle order placement
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Place Order'),
+            ),
+          ],
+        ),
       ),
     );
   }
