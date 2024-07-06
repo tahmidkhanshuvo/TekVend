@@ -80,12 +80,26 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       children: [
                         Text(
                           'Price: \$${widget.product.price.toStringAsFixed(2)}',
-                          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                         ),
                         if (widget.product.discountPrice < widget.product.price)
-                          Text(
-                            'Discount Price: \$${widget.product.discountPrice.toStringAsFixed(2)}',
-                            style: const TextStyle(fontSize: 16.0, color: Colors.red),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              color: Colors.red[100], // Background color for discount price
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                'Discount Price: \$${widget.product.discountPrice.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.red, // Text color for discount price
+                                  decoration: TextDecoration.lineThrough, // Strike-through effect
+                                ),
+                              ),
+                            ),
                           ),
                       ],
                     ),
@@ -137,9 +151,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     // Handle Buy Now action
                   },
                   child: const Text('Buy Now'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 18.0),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Green color for button
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                    ),
+                    textStyle: MaterialStateProperty.all<TextStyle>(
+                      const TextStyle(fontSize: 18.0),
+                    ),
                   ),
                 ),
               ],
@@ -153,21 +172,36 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Specifications:',
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                    ),
-                    for (var spec in widget.product.specs)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Text(spec),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.0),
+                  color: Colors.grey[200], // Background color for specifications
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Specifications:',
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                       ),
-                  ],
+                      const SizedBox(height: 8.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var spec in widget.product.specs)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Text(
+                                '- $spec',
+                                style: const TextStyle(fontSize: 16.0),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
