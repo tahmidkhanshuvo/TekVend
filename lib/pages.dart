@@ -5,6 +5,7 @@ export 'user profile/profile.dart';
 
 export 'shopping/cart.dart';
 export 'shopping/checkout.dart';
+export 'shopping/payment.dart';
 
 
 export 'images/images.dart';
