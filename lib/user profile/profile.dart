@@ -1,181 +1,7 @@
 import '../pages.dart';
 
-class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen({Key? key}) : super(key: key);
-
-  @override
-  _UserProfileScreenState createState() => _UserProfileScreenState();
-}
-
-class _UserProfileScreenState extends State<UserProfileScreen> {
-
-  int _selectedIndex = 3;
-
-  void _onItemTapped(int index) {
-    if (_selectedIndex != index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-      switch (index) {
-        case 0:
-          Navigator.pushReplacementNamed(context, '/categories');
-          break;
-        case 1:
-          Navigator.pushReplacementNamed(context, '/home');
-          break;
-        case 2:
-          Navigator.pushReplacementNamed(context, '/cart');
-          break;
-        case 3:
-
-          break;
-      }
-    }
-  }
-
-
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _dobController = TextEditingController();
-  final _genderController = TextEditingController();
-  final _addressController = TextEditingController();
-
-  User? _currentUser;
-  DocumentSnapshot? _userData;
-  String _profileImageUrl = 'default_image_url'; // Default image URL
-
-  @override
-  void initState() {
-    super.initState();
-    _currentUser = FirebaseAuth.instance.currentUser;
-    _fetchUserData();
-  }
-
-  Future<void> _fetchUserData() async {
-    if (_currentUser != null) {
-      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).get();
-      setState(() {
-        _userData = userData;
-        _nameController.text = '${userData['firstName']} ${userData['lastName']}';
-        _emailController.text = userData['email'];
-        _phoneController.text = userData['phoneNumber'];
-        _dobController.text = userData['dob'] ?? ''; // Assuming 'dob' is stored in Firestore
-        _genderController.text = userData['gender'] ?? ''; // Assuming 'gender' is stored in Firestore
-        _addressController.text = userData['address'] ?? ''; // Assuming 'address' is stored in Firestore
-        _profileImageUrl = userData['profileImageUrl'] ?? 'default_image_url';
-      });
-    }
-  }
-
-  Future<void> _updateUserData() async {
-    if (_currentUser != null) {
-      await FirebaseFirestore.instance.collection('users').doc(_currentUser!.uid).update({
-        'firstName': _nameController.text.split(' ')[0],
-        'lastName': _nameController.text.split(' ').length > 1 ? _nameController.text.split(' ')[1] : '',
-        'email': _emailController.text,
-        'phoneNumber': _phoneController.text,
-        'dob': _dobController.text,
-        'gender': _genderController.text,
-        'address': _addressController.text,
-        'profileImageUrl': _profileImageUrl,
-      }).then;
-    }
-  }
-
-  Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/signin'); // Assuming '/login' is the route for the login screen
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _dobController.dispose();
-    _genderController.dispose();
-    _addressController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      File imageFile = File(pickedFile.path);
-      String fileName = '${_currentUser!.uid}.png';
-
-      try {
-        // Upload image to Firebase Storage
-        TaskSnapshot snapshot = await FirebaseStorage.instance.ref().child('profile_images/$fileName').putFile(imageFile);
-        String downloadUrl = await snapshot.ref.getDownloadURL();
-
-        // Update Firestore with new image URL
-        setState(() {
-          _profileImageUrl = downloadUrl;
-        });
-        await _updateUserData();
-      } catch (e) {
-        print('Failed to upload image: $e');
-      }
-    }
-  }
-
-  void _editProfile() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-              ),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              TextField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
-              ),
-              TextField(
-                controller: _dobController,
-                decoration: const InputDecoration(labelText: 'Date of Birth'),
-              ),
-              TextField(
-                controller: _genderController,
-                decoration: const InputDecoration(labelText: 'Gender'),
-              ),
-              TextField(
-                controller: _addressController,
-                decoration: const InputDecoration(labelText: 'Shipping Address'),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              _updateUserData();
-              Navigator.of(context).pop();
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-  }
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+class UserProfileScreen extends StatelessWidget {
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -185,127 +11,169 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: _signOut
+            onPressed: userController.signOut,
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 20),
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _profileImageUrl == 'default_image_url'
-                      ? const AssetImage('lib/images/default_profile.png') // Default profile image path
-                      : NetworkImage(_profileImageUrl) as ImageProvider,
+      body: Obx(() {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              Center(
+                child: GestureDetector(
+                  onTap: userController.pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: userController.profileImageUrl.value == 'default_image_url'
+                        ? const AssetImage('lib/images/default_profile.png') // Default profile image path
+                        : NetworkImage(userController.profileImageUrl.value) as ImageProvider,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: Text(
-                _nameController.text,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              Center(
+                child: Text(
+                  userController.nameController.text,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: Text(
-                _emailController.text,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
+              const SizedBox(height: 10),
+              Center(
+                child: Text(
+                  userController.emailController.text,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Name'),
-              subtitle: Text(_nameController.text),
-            ),
-            ListTile(
-              leading: const Icon(Icons.email),
-              title: const Text('Email'),
-              subtitle: Text(_emailController.text),
-            ),
-            ListTile(
-              leading: const Icon(Icons.phone),
-              title: const Text('Phone'),
-              subtitle: Text(_phoneController.text),
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('Date of Birth'),
-              subtitle: Text(_dobController.text),
-            ),
-            ListTile(
-              leading: const Icon(Icons.wc),
-              title: const Text('Gender'),
-              subtitle: Text(_genderController.text),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Shipping Address'),
-              subtitle: Text(_addressController.text),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _editProfile,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.green,
+              const SizedBox(height: 30),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Name'),
+                subtitle: Text(userController.nameController.text),
               ),
-              child: const Text('Edit Profile'),
+              ListTile(
+                leading: const Icon(Icons.email),
+                title: const Text('Email'),
+                subtitle: Text(userController.emailController.text),
+              ),
+              ListTile(
+                leading: const Icon(Icons.phone),
+                title: const Text('Phone'),
+                subtitle: Text(userController.phoneController.text),
+              ),
+              ListTile(
+                leading: const Icon(Icons.calendar_today),
+                title: const Text('Date of Birth'),
+                subtitle: Text(userController.dobController.text),
+              ),
+              ListTile(
+                leading: const Icon(Icons.wc),
+                title: const Text('Gender'),
+                subtitle: Text(userController.genderController.text),
+              ),
+              ListTile(
+                leading: const Icon(Icons.home),
+                title: const Text('Shipping Address'),
+                subtitle: Text(userController.addressController.text),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Edit Profile'),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            TextField(
+                              controller: userController.nameController,
+                              decoration: const InputDecoration(labelText: 'Name'),
+                            ),
+                            TextField(
+                              controller: userController.emailController,
+                              decoration: const InputDecoration(labelText: 'Email'),
+                            ),
+                            TextField(
+                              controller: userController.phoneController,
+                              decoration: const InputDecoration(labelText: 'Phone'),
+                            ),
+                            TextField(
+                              controller: userController.dobController,
+                              decoration: const InputDecoration(labelText: 'Date of Birth'),
+                            ),
+                            TextField(
+                              controller: userController.genderController,
+                              decoration: const InputDecoration(labelText: 'Gender'),
+                            ),
+                            TextField(
+                              controller: userController.addressController,
+                              decoration: const InputDecoration(labelText: 'Shipping Address'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            userController.updateUserData();
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                child: const Text('Edit Profile'),
+              ),
+            ],
+          ),
+        );
+      }),
+      bottomNavigationBar: Obx(() {
+        return BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: userController.selectedIndex.value,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.category),
+              label: 'Categories',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: 'Cart',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
             ),
           ],
-        ),
-      ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex, // Set the current index based on the selected index
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.category,
-              color: _selectedIndex == 0 ? Colors.green : Colors.grey,
-            ),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: _selectedIndex == 1 ? Colors.green : Colors.grey,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: _selectedIndex == 2 ? Colors.green : Colors.grey,
-            ),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: _selectedIndex == 3 ? Colors.green : Colors.grey,
-            ),
-            label: 'Profile',
-          ),
-        ],
-        onTap: (index) {
-          _onItemTapped(index);
-        },
-      ),
+          onTap: userController.onItemTapped,
+        );
+      }),
     );
   }
 }

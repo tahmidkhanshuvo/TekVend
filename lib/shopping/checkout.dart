@@ -12,24 +12,24 @@ class CheckoutPageState extends State<CheckoutPage> {
   int _selectedIndex = 2; // Initial index for the Cart page
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    Navigator.pushReplacementNamed(context, _getRouteName(index));
-  }
+    if (_selectedIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      switch (index) {
+        case 0:
+          Get.toNamed('/categories');
+          break;
+        case 1:
+          Get.toNamed('/home');
+          break;
+        case 2:
 
-  String _getRouteName(int index) {
-    switch (index) {
-      case 0:
-        return '/categories';
-      case 1:
-        return '/home';
-      case 2:
-        return '/cart';
-      case 3:
-        return '/profile';
-      default:
-        return '/home';
+          break;
+        case 3:
+          Get.toNamed('/profile');
+          break;
+      }
     }
   }
 

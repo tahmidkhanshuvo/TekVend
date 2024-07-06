@@ -7,32 +7,38 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  // Ensure the UserController is initialized and fetch the initial route
+  UserController userController = Get.put(UserController());
+  String initialRoute = await userController.getInitialRoute();
+
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+
+  const MyApp({Key? key, required this.initialRoute}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'TekVend',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: '/home',
-      routes: {
-        '/home': (context) =>  ProductPage(),
-        '/signin': (context) =>  const SignInScreen(),
-        '/signup': (context) =>  const SignUpScreen(),
-        '/chat': (context) => const ChatScreen(),
-        '/profile': (context) => const UserProfileScreen(),
-        '/cart': (context) => const ProductCartScreen(),
-        '/checkout': (context) => const CheckoutPage(),
-        '/upload': (context) => UploadProductPage(),
-      },
+      initialRoute: initialRoute,
+      getPages: [
+        GetPage(name: '/home', page: () => ProductPage()),
+        GetPage(name: '/signin', page: () => const SignInScreen()),
+        GetPage(name: '/signup', page: () => const SignUpScreen()),
+        GetPage(name: '/chat', page: () => const ChatScreen()),
+        GetPage(name: '/profile', page: () => UserProfileScreen()),
+        GetPage(name: '/cart', page: () => const ProductCartScreen()),
+        GetPage(name: '/checkout', page: () => const CheckoutPage()),
+        GetPage(name: '/upload', page: () => UploadProductPage()),
+      ],
     );
   }
 }

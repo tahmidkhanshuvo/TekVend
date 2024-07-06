@@ -65,16 +65,16 @@ class _ProductCartScreenState extends State<ProductCartScreen> {
       });
       switch (index) {
         case 0:
-          Navigator.pushReplacementNamed(context, '/categories');
+          Get.toNamed('/categories');
           break;
         case 1:
-          Navigator.pushReplacementNamed(context, '/home');
+           Get.toNamed('/home');
           break;
         case 2:
 
           break;
         case 3:
-          Navigator.pushReplacementNamed(context, '/profile');
+          Get.toNamed('/profile');
           break;
       }
     }

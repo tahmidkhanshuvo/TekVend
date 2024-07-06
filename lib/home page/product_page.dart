@@ -10,23 +10,21 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   int _selectedIndex = 1; // Index for Home
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     if (_selectedIndex != index) {
-      setState(() {
-        _selectedIndex = index;
-      });
+      _selectedIndex = index;
       switch (index) {
         case 0:
-          Navigator.pushReplacementNamed(context, '/categories');
+          Get.toNamed('/categories');
           break;
         case 1:
-        // Do nothing, already on the home page
+
           break;
         case 2:
-          Navigator.pushReplacementNamed(context, '/cart');
+          Get.toNamed('/cart');
           break;
         case 3:
-          Navigator.pushReplacementNamed(context, '/profile');
+          Get.toNamed('/profile');
           break;
       }
     }
@@ -120,7 +118,7 @@ class _ProductPageState extends State<ProductPage> {
             label: 'Profile',
           ),
         ],
-        onTap: _onItemTapped,
+        onTap: onItemTapped,
       ),
     );
   }

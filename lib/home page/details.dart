@@ -10,6 +10,29 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+
+  int selectedIndex = 2;
+
+  void onItemTapped(int index) {
+    if (selectedIndex != index) {
+      selectedIndex = index;
+      switch (index) {
+        case 0:
+          Get.toNamed('/categories');
+          break;
+        case 1:
+          Get.toNamed('/home');
+          break;
+        case 2:
+
+          break;
+        case 3:
+          Get.toNamed('/profile');
+          break;
+      }
+    }
+  }
+
   int _quantity = 1;
 
   void _incrementQuantity() {
