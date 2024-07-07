@@ -5,8 +5,8 @@ class Product {
   final double price;
   final String imageUrl;
   final String description;
-  final String category; // New field for category
-  final String brand; // New field for brand
+  final String category;
+  final String brand;
   double discountPrice;
   List<String> specs;
   int stock;
@@ -61,7 +61,27 @@ class Product {
       'reviews': reviews,
       'questions': questions,
       'quantity': quantity,
+      'searchKeywords': _generateSearchKeywords(),
     };
+  }
+
+  List<String> _generateSearchKeywords() {
+    List<String> keywords = [];
+    keywords.addAll(_getKeywordsFromString(name));
+    keywords.addAll(_getKeywordsFromString(description));
+    keywords.addAll(_getKeywordsFromString(category));
+    keywords.addAll(_getKeywordsFromString(brand));
+    return keywords.toSet().toList(); // Removing duplicates by converting to Set and back to List
+  }
+
+  List<String> _getKeywordsFromString(String input) {
+    List<String> keywords = [];
+    for (int i = 0; i < input.length; i++) {
+      for (int j = i + 1; j <= input.length; j++) {
+        keywords.add(input.substring(i, j).toLowerCase());
+      }
+    }
+    return keywords;
   }
 }
 
@@ -77,4 +97,3 @@ class ProductUploader {
     }
   }
 }
-

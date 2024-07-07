@@ -1,5 +1,4 @@
-
-import '../pages.dart'; // Adjust the import path based on your project structure
+import '../pages.dart';
 
 class UploadProductPage extends StatefulWidget {
   @override

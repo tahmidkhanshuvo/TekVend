@@ -60,8 +60,7 @@ class ProductSearchDelegate extends SearchDelegate<Product?> {
   Stream<List<Product>> _searchProducts(String query) {
     return FirebaseFirestore.instance
         .collection('products')
-        .where('name', isGreaterThanOrEqualTo: query)
-        .where('name', isLessThanOrEqualTo: query + '\uf8ff')
+        .where('searchKeywords', arrayContains: query.toLowerCase())
         .snapshots()
         .map((snapshot) =>
         snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList());
