@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/cart', page: () => const ProductCartScreen()),
         GetPage(name: '/checkout', page: () => CheckoutPage()),
         GetPage(name: '/upload', page: () => UploadProductPage()),
+        GetPage(name: '/categoryProducts', page: () => CategoryProductsPage()),
       ],
     );
   }
