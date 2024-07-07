@@ -18,6 +18,8 @@ export 'home page/banner_widget.dart';
 export 'home page/categories_widget.dart';
 export 'home page/products_grid.dart';
 export 'home page/product_search_delegate.dart';
+export 'home page/headline.dart';
+export 'home page/categorypage.dart';
 
 // All Controller Pages
 export 'controllers/message.dart';
@@ -56,7 +58,7 @@ export 'dart:async';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'dart:convert';
 export 'package:get/get.dart';
-export 'dart:async';
+export 'package:marquee/marquee.dart';
 
 
 

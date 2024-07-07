@@ -1,6 +1,7 @@
 import '../pages.dart';
 
 
+
 class ProductPage extends StatefulWidget {
   const ProductPage({Key? key}) : super(key: key);
 
@@ -13,7 +14,9 @@ class _ProductPageState extends State<ProductPage> {
 
   void onItemTapped(int index) {
     if (_selectedIndex != index) {
-      _selectedIndex = index;
+      setState(() {
+        _selectedIndex = index;
+      });
       switch (index) {
         case 0:
           Get.toNamed('/categories');
@@ -34,17 +37,40 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Page'),
+        title: Row(
+          children: [
+            Image.asset(
+              'lib/images/chatlogo.png', // Replace with your logo asset path
+              height: 80,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200], // Transparent background
+                  contentPadding: EdgeInsets.zero,
+                  hintStyle: TextStyle(color: Colors.black12.withOpacity(0.3)),
+                  prefixIconColor: Colors.black12.withOpacity(0.5),
+                ),
+                style: TextStyle(color: Colors.black12),
+                onSubmitted: (query) {
+                  showSearch(
+                    context: context,
+                    delegate: ProductSearchDelegate(),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: ProductSearchDelegate(),
-              );
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.menu),
             onPressed: () {
@@ -52,6 +78,8 @@ class _ProductPageState extends State<ProductPage> {
             },
           ),
         ],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -65,22 +93,14 @@ class _ProductPageState extends State<ProductPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 8),
-            const Text(
-              'Featured Products',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
+            const CategoriesWidget(),
+            const SizedBox(height: 16),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.3,
               child: SwiperWidget(),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Categories',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const CategoriesWidget(),
+            const HeadlineWidget(), // Add the headline widget here
             const SizedBox(height: 16),
             StreamBuilder<List<Product>>(
               stream: _getProductsStream(),
