@@ -91,9 +91,9 @@ class CategoryItem extends StatelessWidget {
       child: Column(
         children: [
           CircleAvatar(
-            radius: 20,
+            radius: 30,
             backgroundColor: Colors.grey[200],
-            child: Icon(icon, size: 24),
+            child: Icon(icon, size: 36),
           ),
           const SizedBox(height: 5),
           Text(

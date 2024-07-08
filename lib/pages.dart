@@ -28,6 +28,7 @@ export 'controllers/upload.dart';
 export 'controllers/user.dart';
 export 'controllers/address.dart';
 export 'controllers/cartcontroller.dart';
+export 'controllers/loading.dart';
 
 // Auth screen pages
 export 'auth screen/sign_up_screen.dart';

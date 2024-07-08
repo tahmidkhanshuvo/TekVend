@@ -28,7 +28,7 @@ class CategoryProductsPage extends StatelessWidget {
   Stream<List<Product>> _fetchProductsByCategory(String categoryName) {
     return FirebaseFirestore.instance
         .collection('products')
-        .where('category', isEqualTo: categoryName)
+        .where('searchKeywords', arrayContains: categoryName.toLowerCase())
         .snapshots()
         .map((snapshot) => snapshot.docs
         .map((doc) => Product.fromFirestore(doc))
