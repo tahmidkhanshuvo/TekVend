@@ -1,9 +1,14 @@
 import 'pages.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'demo/demo_app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (const bool.fromEnvironment('DEMO_MODE', defaultValue: kIsWeb)) {
+    runApp(const TekVendDemo());
+    return;
+  }
   await Firebase.initializeApp(
-    name: 'TekVend',
     options: DefaultFirebaseOptions.currentPlatform,
   );
 

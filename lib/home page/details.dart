@@ -51,6 +51,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   void _addToCart() {
     final productMap = {
+      'id': widget.product.id,
       'name': widget.product.name,
       'price': widget.product.price,
       'quantity': _quantity,

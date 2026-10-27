@@ -1,6 +1,7 @@
 import '../pages.dart';
 
 class Product {
+  final String id;
   final String name;
   final double price;
   final String imageUrl;
@@ -15,6 +16,7 @@ class Product {
   int quantity;
 
   Product({
+    this.id = '',
     required this.name,
     required this.price,
     required this.imageUrl,
@@ -32,6 +34,7 @@ class Product {
   factory Product.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Product(
+      id: doc.id,
       name: data['name'] ?? '',
       price: (data['price'] ?? 0.0).toDouble(),
       imageUrl: data['imageUrl'] ?? '',

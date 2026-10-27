@@ -26,7 +26,15 @@ class CartController extends GetxController {
   }
 
   void addProduct(Map<String, dynamic> product) {
-    cartProducts.add(product);
+    final key = product['id'] ?? product['name'];
+    final existing = cartProducts.indexWhere((item) => (item['id'] ?? item['name']) == key);
+    final quantity = ((product['quantity'] as num?)?.toInt() ?? 1).clamp(1, 99);
+    if (existing >= 0) {
+      cartProducts[existing]['quantity'] = (((cartProducts[existing]['quantity'] as num?)?.toInt() ?? 1) + quantity).clamp(1, 99);
+      cartProducts.refresh();
+    } else {
+      cartProducts.add({ ...product, 'quantity': quantity });
+    }
     updateTotalPrice();
     saveCartItems();
   }
@@ -38,7 +46,10 @@ class CartController extends GetxController {
   }
 
   void updateProductQuantity(int index, int quantity) {
-    cartProducts[index]['quantity'] = quantity;
+    if (index < 0 || index >= cartProducts.length) return;
+    if (quantity <= 0) { removeProduct(index); return; }
+    cartProducts[index]['quantity'] = quantity.clamp(1, 99);
+    cartProducts.refresh();
     updateTotalPrice();
     saveCartItems();
   }
@@ -46,7 +57,7 @@ class CartController extends GetxController {
   void updateTotalPrice() {
     totalPrice.value = cartProducts.fold(
       0.0,
-          (sum, item) => sum + (item['price'] * item['quantity']),
+          (sum, item) => sum + ((item['price'] as num?)?.toDouble() ?? 0) * ((item['quantity'] as num?)?.toInt() ?? 1),
     );
   }
 }

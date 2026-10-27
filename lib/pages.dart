@@ -45,7 +45,7 @@ export 'package:flutter/gestures.dart';
 export 'package:flutter/material.dart';
 export 'package:google_sign_in/google_sign_in.dart';
 export 'package:google_generative_ai/google_generative_ai.dart';
-export 'package:intl/intl.dart';
+export 'package:intl/intl.dart' hide TextDirection;
 export 'package:amar/firebase_options.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:flutter/services.dart';
@@ -58,10 +58,5 @@ export 'package:font_awesome_flutter/font_awesome_flutter.dart';
 export 'dart:async';
 export 'package:shared_preferences/shared_preferences.dart';
 export 'dart:convert';
-export 'package:get/get.dart';
+export 'package:get/get.dart' hide HeaderValue;
 export 'package:marquee/marquee.dart';
-
-
-
-
-

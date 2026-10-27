@@ -21,12 +21,14 @@ class SignInScreenState extends State<SignInScreen> {
 
   void _signInWithEmailAndPassword() async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
+      if (!mounted) return;
       print('Failed to sign in: $e');
       // Handle sign-in failures, e.g., display error message
       String errorMessage = 'Failed to sign in';
@@ -43,7 +45,8 @@ class SignInScreenState extends State<SignInScreen> {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return; // User cancelled Google sign-in
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -51,8 +54,10 @@ class SignInScreenState extends State<SignInScreen> {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
+      if (!mounted) return;
       print('Failed to sign in with Google: $e');
       // Handle sign-in failures, e.g., display error message
       ScaffoldMessenger.of(context).showSnackBar(

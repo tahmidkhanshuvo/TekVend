@@ -11,31 +11,66 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _userInput = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  static const apiKey = 'AIzaSyBRP2wSZR4GiBja6wM-1L-miOvlzJbc5wg';
+  static const apiKey = String.fromEnvironment('GEMINI_API_KEY');
 
-  final model = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+  final model = GenerativeModel(
+      model: const String.fromEnvironment('GEMINI_MODEL',
+          defaultValue: 'gemini-pro'),
+      apiKey: apiKey);
 
   final List<Message> _messages = [];
+  bool _sending = false;
+
+  @override
+  void dispose() {
+    _userInput.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   Future<void> sendMessage() async {
     final message = _userInput.text;
-    if (message.trim().isEmpty) return;
+    if (message.trim().isEmpty || _sending) return;
 
     setState(() {
-      _messages.add(Message(isUser: true, message: message, date: DateTime.now()));
+      _messages
+          .add(Message(isUser: true, message: message, date: DateTime.now()));
     });
 
-    final content = [Content.text(message)];
-    final response = await model.generateContent(content);
-
-    setState(() {
-      _messages.add(Message(isUser: false, message: response.text ?? "", date: DateTime.now()));
-    });
+    if (apiKey.isEmpty) {
+      setState(() => _messages.add(Message(
+          isUser: false,
+          message:
+              'Cloud assistant is not configured. You can browse products, manage your cart, and update your address from the app.',
+          date: DateTime.now())));
+      _userInput.clear();
+      return;
+    }
+    _sending = true;
+    try {
+      final response = await model.generateContent(
+          [Content.text(message)]).timeout(const Duration(seconds: 45));
+      if (!mounted) return;
+      setState(() => _messages.add(Message(
+          isUser: false,
+          message: response.text ?? 'No response received. Please try again.',
+          date: DateTime.now())));
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _messages.add(Message(
+          isUser: false,
+          message:
+              'The cloud assistant is unavailable. Please try again later.',
+          date: DateTime.now())));
+    } finally {
+      _sending = false;
+    }
 
     _userInput.clear();
 
     // Ensure the scroll animation is completed after the new message is added
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
@@ -69,8 +104,10 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.dstATop),
-            image: const AssetImage('lib/images/chatbackground.png'), // Update with your local image path
+            colorFilter: ColorFilter.mode(
+                Colors.black.withOpacity(0.8), BlendMode.dstATop),
+            image: const AssetImage(
+                'lib/images/chatbackground.png'), // Update with your local image path
             fit: BoxFit.cover,
           ),
         ),
