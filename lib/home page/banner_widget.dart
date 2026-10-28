@@ -8,7 +8,7 @@ class SwiperWidget extends StatefulWidget {
 class _SwiperWidgetState extends State<SwiperWidget> {
   late PageController _pageController;
   int _currentIndex = 0;
-  late Timer _timer;
+  Timer? _timer;
   List<Slide> _slides = [];
   bool _loading = true;
 
@@ -21,7 +21,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _timer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -45,14 +45,20 @@ class _SwiperWidgetState extends State<SwiperWidget> {
 
   Future<void> _fetchSlides() async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('slide').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('slide')
+          .get();
+      if (!mounted) return;
       setState(() {
-        _slides = querySnapshot.docs.map((doc) => Slide.fromFirestore(doc)).toList();
+        _slides = querySnapshot.docs
+            .map((doc) => Slide.fromFirestore(doc))
+            .toList();
         _loading = false; // Loading complete
       });
-      _startTimer(); // Start the timer only after slides are fetched
+      if (_slides.length > 1) _startTimer();
     } catch (e) {
       print('Error fetching slides: $e');
+      if (!mounted) return;
       setState(() {
         _loading = false;
       });
@@ -64,6 +70,7 @@ class _SwiperWidgetState extends State<SwiperWidget> {
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
+    if (_slides.isEmpty) return const SizedBox.shrink();
 
     return Stack(
       children: [
@@ -119,11 +126,13 @@ class _SwiperWidgetState extends State<SwiperWidget> {
   List<Widget> _buildIndicator() {
     return List.generate(
       _slides.length,
-          (index) => Padding(
+      (index) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: CircleAvatar(
           radius: 5,
-          backgroundColor: index == _currentIndex ? Colors.blue : Colors.grey[400],
+          backgroundColor: index == _currentIndex
+              ? Colors.blue
+              : Colors.grey[400],
         ),
       ),
     );
@@ -137,8 +146,6 @@ class Slide {
 
   factory Slide.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map<String, dynamic>;
-    return Slide(
-      imageUrl: data['imageUrl'] ?? '',
-    );
+    return Slide(imageUrl: data['imageUrl'] ?? '');
   }
 }

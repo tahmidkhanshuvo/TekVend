@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 
 import 'demo_store.dart';
 
-const ink = Color(0xff17201c),
-    lime = Color(0xffd9f578),
-    canvas = Color(0xfff7f8f3);
+const ink = Color(0xff202124),
+    brandGreen = Color(0xff2e7d32),
+    softGreen = Color(0xffe8f5e9),
+    canvas = Colors.white;
 String money(num value) => NumberFormat.currency(
   locale: 'en_BD',
   symbol: '৳ ',
@@ -28,9 +29,9 @@ class _TekVendDemoState extends State<TekVendDemo> {
       useMaterial3: true,
       scaffoldBackgroundColor: canvas,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: ink,
-        primary: ink,
-        secondary: lime,
+        seedColor: Colors.green,
+        primary: brandGreen,
+        secondary: brandGreen,
         surface: canvas,
       ),
       fontFamily: 'Roboto',
@@ -39,11 +40,11 @@ class _TekVendDemoState extends State<TekVendDemo> {
         fillColor: Colors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xffe1e5dc)),
+          borderSide: const BorderSide(color: Color(0xffe5e7eb)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xffe1e5dc)),
+          borderSide: const BorderSide(color: Color(0xffe5e7eb)),
         ),
       ),
     ),
@@ -156,26 +157,14 @@ class _DemoShopState extends State<DemoShop> {
             automaticallyImplyLeading: false,
             title: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: ink,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.bolt, color: lime, size: 25),
-                ),
-                const SizedBox(width: 10),
                 InkWell(
                   onTap: () => setState(() => tab = 0),
-                  child: const Text(
-                    'TekVend',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -1,
-                      color: ink,
-                    ),
+                  child: Image.asset(
+                    'lib/images/icon.png',
+                    width: 150,
+                    height: 64,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'TekVend',
                   ),
                 ),
                 if (desktop) ...[
@@ -227,7 +216,7 @@ class _DemoShopState extends State<DemoShop> {
             ],
             bottom: const PreferredSize(
               preferredSize: Size.fromHeight(1),
-              child: Divider(height: 1, color: Color(0xffe1e5dc)),
+              child: Divider(height: 1, color: Color(0xffe5e7eb)),
             ),
           ),
           bottomNavigationBar: desktop
@@ -236,7 +225,7 @@ class _DemoShopState extends State<DemoShop> {
                   selectedIndex: tab,
                   onDestinationSelected: (value) => setState(() => tab = value),
                   backgroundColor: Colors.white,
-                  indicatorColor: lime,
+                  indicatorColor: softGreen,
                   destinations: const [
                     NavigationDestination(
                       icon: Icon(Icons.grid_view_outlined),
@@ -281,7 +270,7 @@ class _DemoShopState extends State<DemoShop> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: lime.withValues(alpha: .4),
+                          color: softGreen.withValues(alpha: .4),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Text(
@@ -304,7 +293,7 @@ class _DemoShopState extends State<DemoShop> {
                       else
                         help(),
                       const SizedBox(height: 60),
-                      const Divider(color: Color(0xffe1e5dc)),
+                      const Divider(color: Color(0xffe5e7eb)),
                       const SizedBox(height: 24),
                       Wrap(
                         spacing: 30,
@@ -353,85 +342,39 @@ class _DemoShopState extends State<DemoShop> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (tab == 0) ...[
-          Container(
-            padding: EdgeInsets.all(desktop ? 40 : 26),
-            decoration: BoxDecoration(
-              color: ink,
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'GOOD GEAR. GREAT POSSIBILITIES.',
-                        style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 2,
-                          color: lime,
-                          fontWeight: FontWeight.w600,
+          SizedBox(
+            height: desktop ? 270 : 230,
+            child: PageView.builder(
+              itemCount: desktop ? 2 : 5,
+              itemBuilder: (context, page) => Row(
+                children: List.generate(desktop ? 3 : 1, (column) {
+                  final slide = (page * (desktop ? 3 : 1) + column) % 5 + 1;
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          'lib/images/slide$slide.jpg',
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          semanticLabel:
+                              'TekVend original product highlight $slide',
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'The gear to make\nit happen.',
-                        style: TextStyle(
-                          fontSize: desktop ? 52 : 37,
-                          height: 1.08,
-                          letterSpacing: -2,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'From the first setup to the next big upgrade.\nExplore electronics for work, play, and everything between.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.7,
-                          color: Color(0xffacb7af),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: lime,
-                          foregroundColor: ink,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 22,
-                            vertical: 18,
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() => category = 'Components');
-                        },
-                        label: const Text('Build something great'),
-                        icon: const Icon(Icons.arrow_outward, size: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                if (desktop)
-                  Container(
-                    width: 300,
-                    height: 270,
-                    padding: const EdgeInsets.all(22),
-                    margin: const EdgeInsets.only(left: 32),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Image.asset(
-                      'lib/images/product2.jpg',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-              ],
+                  );
+                }),
+              ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 10),
+          const Text(
+            'Swipe through product highlights',
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          const SizedBox(height: 28),
         ],
         heading(
           tab == 1 ? 'Your saved finds' : 'Find your next upgrade',
@@ -490,7 +433,7 @@ class _DemoShopState extends State<DemoShop> {
                   label: Text(value),
                   selected: category == value,
                   onSelected: (_) => setState(() => category = value),
-                  selectedColor: lime,
+                  selectedColor: softGreen,
                   showCheckmark: false,
                 ),
               )
@@ -531,7 +474,7 @@ class _DemoShopState extends State<DemoShop> {
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
-                      side: const BorderSide(color: Color(0xffe4e8de)),
+                      side: const BorderSide(color: Color(0xffe5e7eb)),
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: Column(
@@ -811,7 +754,7 @@ class _DemoShopState extends State<DemoShop> {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: const Color(0xffe1e5dc)),
+            border: Border.all(color: const Color(0xffe5e7eb)),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -1111,7 +1054,7 @@ class _DemoShopState extends State<DemoShop> {
             margin: const EdgeInsets.only(bottom: 14),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: message['role'] == 'you' ? lime : Colors.white,
+              color: message['role'] == 'you' ? softGreen : Colors.white,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(

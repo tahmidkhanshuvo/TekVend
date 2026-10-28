@@ -22,6 +22,8 @@ A Flutter electronics marketplace with a persistent interactive web demo and the
 
 Originally developed by AUST CSE students for **CSE2104**. The complete marketplace source has been retained, including the original Firebase authentication, product, cart and profile screens. The public web experience is a clearly labelled interactive demo using sample catalogue data and local browser persistence. It does not charge money, dispatch products, create a cloud account, or share a cart between devices.
 
+The interface retains TekVend's original white/green Material theme, original logo, product imagery and banner assets. Responsive layouts and functional repairs build on that identity. The native Categories destination is registered, banner loading/disposal handles empty results safely, and empty headline streams no longer construct a blank marquee.
+
 ## Explore the web demo
 
 Use **Your profile → Reset local demo** to remove this browser's demo profile, saved products, cart and receipts after trying the app. A confirmation protects against accidental clearing; other browser storage is preserved.

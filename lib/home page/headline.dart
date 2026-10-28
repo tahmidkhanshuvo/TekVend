@@ -7,7 +7,10 @@ class HeadlineWidget extends StatelessWidget {
     return FirebaseFirestore.instance
         .collection('headlines')
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc['text'] as String).toList());
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => doc['text'] as String).toList(),
+        );
   }
 
   @override
@@ -22,13 +25,21 @@ class HeadlineWidget extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
         List<String> headlines = snapshot.data ?? [];
+        headlines = headlines
+            .where((headline) => headline.trim().isNotEmpty)
+            .toList();
+        if (headlines.isEmpty) return const SizedBox.shrink();
         return Container(
           height: 40,
           color: Colors.grey[200],
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Marquee(
             text: headlines.join('   |   '),
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black87),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
             scrollAxis: Axis.horizontal,
             blankSpace: 20.0,
             velocity: 50.0,

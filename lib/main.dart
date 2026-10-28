@@ -1,5 +1,7 @@
 import 'pages.dart';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
+
 import 'demo/demo_app.dart';
 
 Future<void> main() async {
@@ -8,9 +10,7 @@ Future<void> main() async {
     runApp(const TekVendDemo());
     return;
   }
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Ensure the UserController is initialized and fetch the initial route
   UserController userController = Get.put(UserController());
@@ -36,6 +36,13 @@ class MyApp extends StatelessWidget {
       initialRoute: initialRoute,
       getPages: [
         GetPage(name: '/home', page: () => ProductPage()),
+        GetPage(
+          name: '/categories',
+          page: () => Scaffold(
+            appBar: AppBar(title: const Text('Categories')),
+            body: const SingleChildScrollView(child: CategoriesWidget()),
+          ),
+        ),
         GetPage(name: '/signin', page: () => const SignInScreen()),
         GetPage(name: '/signup', page: () => const SignUpScreen()),
         GetPage(name: '/chat', page: () => const ChatScreen()),
